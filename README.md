@@ -1,1 +1,7 @@
 # tester_survey
+
+This repo holds the raw data and analysis from research I conducted into software testers and the issues faced by software testers in the workplace. The following text was displayed on the first page of the landing page.
+
+This survey has been designed to discover how testers feel about their job roles and identify the most common issues that testers face in the workplace. This survey attempts to assess some of the factors that influence testers changing roles with the industry and investigates the varied backgrounds of testers, including what brought them to testing. Questions are also asked about levels of job satisfaction at work. This survey does not ask for any personal information which could uniquely identify any individual. All answers are presented as multiple choice / multiple option. Responses to this survey are completely anonymous. It is the intention to use the results of this survey to create one or more factual blog posts on the topic of testers in the workplace which will be published and shared with the software testing community. It is also intended to make the raw statistical data from this survey openly available to allow others to perform their own independent analysis of the data discovered.  This survey should take less than 5 minutes to complete. 
+
+The survey was open from the 4th of May 2016 until the 20th May 2016 and received 187 responses.
