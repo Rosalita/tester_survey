@@ -1,22 +1,31 @@
 # Survey response analysis
 
 # Set working dir
-# setwd("/Users/Rosie/Desktop/")
-setwd ("/Dev/Git/tester_survey")
+# setwd ("/Dev/Git/tester_survey")
+setwd("/git/tester_survey")
 
 # Read in data
 mydata <- read.csv("survey_results_raw.csv", 
                   header = TRUE, sep =",")
 
+###################################################
 
-# Make an index of people which are currently testing 
+#                 Section 1
+
+###################################################
+
+# Make an index of all the people which currently work in testing
+# People that currently do not work in testing have been excluded 
 Current_testers <- which(mydata[,2] == "Yes")
+
 #Apply this index to the data
 mydata <- mydata[Current_testers,]
 
+# Total number of testers analysed 
+nrow(mydata)
 
 # Create a sub set of columns 30-53, these are true/false responses to positive and negative questions
-# And convert this sub set to logical vectors
+# And also convert this sub set of true/false answers to logical vectors
 HappyData <- apply(mydata[,30:53], 2, as.logical)
 
 # Make a vector index of positive questions
@@ -25,57 +34,70 @@ pos_index <- c(1, 2, 4, 7, 8, 10, 11, 12, 14, 15, 20, 21)
 # Make a vector index of negative questions
 neg_index <- c(3, 5, 6, 9, 13, 16, 17, 18, 19, 22, 23, 24)
 
-# Pos questions out score up to +12 +1 for each True answer
+# Positive questions score +1 for each True answer, pos_score is a vector of scores from 0 to +12 
 pos_score <- rowSums(HappyData[,pos_index])
-# Neg questions out score up to -12 -1 for each True answer 
+
+# Negative questions score -1 for each True answer, neg_score is a vector of scores from 0 to -12  
 neg_score <- -rowSums(HappyData[,neg_index])
-# Add neg and pos scores to make final score
-HappinessIndex <- pos_score+neg_score
-# People at zero are neither happy or sad
-summary(HappinessIndex)
+
+# Add negative and positive scores to make the final score named Happiness Index
+# The happiness index is a reflection of how positive or negative a job is
+WorkplaceHappinessIndex <- pos_score+neg_score
+
+summary(WorkplaceHappinessIndex)
+
+# Count how many testers work in places with a maximum score on the Workplace Happiness Index
+BestWorkplaces <- which(WorkplaceHappinessIndex == "12")
+
+# Convert this to a percentage
+round (length(BestWorkplaces) / length(WorkplaceHappinessIndex) * 100, digits = 1)
 
 
-
-# Histogram
-breaks <- c(min(HappinessIndex):max(HappinessIndex))
-hist(HappinessIndex, 
+# Plot a Histogram of Workplace Happiness
+breaks <- c(min(WorkplaceHappinessIndex):max(WorkplaceHappinessIndex))
+hist(WorkplaceHappinessIndex, 
      breaks = breaks,
      xlim = c(-12,12),
-     xlab = "Happyness Score",
-     col = "darkolivegreen1",
+     xlab = "Workplace Happiness Index",
+     col = rainbow(20),
      xaxt = "n",
-     main = "Histogram of Tester Happyness"
+     main = "Histogram of Happiness at work"
      )
 axis(1, at = seq(-12, 12, by = 1))
-abline(v = mean(HappinessIndex), col = "blue", lty = 5, lwd = 2)
+abline(v = mean(WorkplaceHappinessIndex), col = "black", lty = 5, lwd = 2)
 legend(-12,15,
-       legend=paste0("mean = ", round(mean(HappinessIndex), digits=1)), 
-       col = "blue", 
+       legend=paste0("mean = ", round(mean(WorkplaceHappinessIndex), digits=1)), 
+       col = "black", 
        lty = 5, 
        lwd = 2
 )
 
-# Next question for each Happyness score how likley are people to change job,
-# nothing impressive here.
-# cbind HappinessIndex with subsetted mydata
-mydata2 <- cbind(mydata[,1:29],HappinessIndex)
-leave_factor <- mydata2[,9]
-# Check levels
-levels(leave_factor)
-# We need levels to be a score 1 to 5
-levels(leave_factor) = c("", 4, 3, 2, 5, 1)
-# Convert factor to character to numeric to obtain values
-leave_vector <- as.numeric(as.character(leave_factor))
+length(WorkplaceHappinessIndex)
 
-# Happy or not boxplot
-# Create indexes first
+# Tester happiness compared to workplace happiness index
+# Create an index of all the testers that say they are happy 
 Happy <- which(mydata2[,8] == "Yes")
+# Create an index of all the testers that say they are not happy
 Not_Happy <- which(mydata2[,8] == "No")
+
+
+# Make a vector containing total numbers of Happy and Not Happy testers
+HappyYesNo <- c(length(Happy), length(Not_Happy)) 
+# Generate labels for pie chart containing % of Happy and Not Happy
+pielabels <- c("Yes", "No")
+percent <- round(HappyYesNo/sum(HappyYesNo)* 100, digits = 1)
+pielabels <- paste(pielabels, percent)    
+pielabels <- paste(pielabels, "%", sep="")
+
+#Plot a pie chart of Happy vs Not Happy testers
+pie(HappyYesNo, labels = pielabels, col = c("lawngreen", "red"), main = "Are you happy in your current testing job?")
+
+
 # prevent vector recycling so find out how many values we are missing
-to_pad <- length(HappinessIndex[Happy]) - length(HappinessIndex[Not_Happy])
+to_pad <- length(WorkplaceHappinessIndex[Happy]) - length(WorkplaceHappinessIndex[Not_Happy])
 # now use rep to pad out the Not Happy version of Happy index with the missing
 # value NA
-Happy_data <- cbind(HappinessIndex[Happy],c(HappinessIndex[Not_Happy],rep(NA, to_pad)))
+Happy_data <- cbind(WorkplaceHappinessIndex[Happy],c(WorkplaceHappinessIndex[Not_Happy],rep(NA, to_pad)))
 # Fix rownames
 colnames(Happy_data) <- c("Happy", "Not Happy")
 # Finsihed matrix
@@ -105,11 +127,11 @@ VU <- which(mydata2[,9] == "Very unlikely")
 
 # now use rep to pad out the Not Happy version of Happy index with the missing
 # value NA
-Happy_data2 <- cbind(c(HappinessIndex[VL], rep(NA, pad_VL)),
-                     c(HappinessIndex[L], rep(NA, pad_L)),
-                     c(HappinessIndex[N], rep(NA, pad_N)),
-                     c(HappinessIndex[U],  rep(NA, pad_U)),
-                     c(HappinessIndex[VU], rep(NA, pad_VU)))
+Happy_data2 <- cbind(c(WorkplaceHappinessIndex[VL], rep(NA, pad_VL)),
+                     c(WorkplaceHappinessIndex[L], rep(NA, pad_L)),
+                     c(WorkplaceHappinessIndex[N], rep(NA, pad_N)),
+                     c(WorkplaceHappinessIndex[U],  rep(NA, pad_U)),
+                     c(WorkplaceHappinessIndex[VU], rep(NA, pad_VU)))
                      
 # Fix rownames
 colnames(Happy_data2) <- c("Very likely", "likely", "Not sure", "Unlikely", "Very unlikely")
@@ -122,6 +144,7 @@ axis(2, at = seq(-12, 12, by = 2))
 
 
 # Are people who studied CS or related topic more or less happy
+
 # Happy or not boxplot
 # Create indexes first
 CS <- which(mydata2[,18] == "Yes")
@@ -129,10 +152,10 @@ No_CS <- which(mydata2[,18] == "No")
 length(CS)
 length(No_CS)
 # prevent vector recycling so find out how many values we are missing
-to_pad <- length(HappinessIndex[CS]) - length(HappinessIndex[No_CS])
+to_pad <- length(WorkplaceHappinessIndex[CS]) - length(WorkplaceHappinessIndex[No_CS])
 # now use rep to pad out the Not Happy version of Happy index with the missing
 # value NA
-Happy_data3 <- cbind(HappinessIndex[CS],c(HappinessIndex[No_CS],rep(NA, to_pad)))
+Happy_data3 <- cbind(WorkplaceHappinessIndex[CS],c(WorkplaceHappinessIndex[No_CS],rep(NA, to_pad)))
 # Fix rownames
 colnames(Happy_data3) <- c("Studied Computing", "Did not study computing")
 # Finsihed matrix
@@ -171,13 +194,13 @@ table(mydata2[,17])
 
 # now use rep to pad out the Not Happy version of Happy index with the missing
 # value NA
-Happy_data4 <- cbind(c(HappinessIndex[None], rep(NA, pad_None)),
-                     c(HappinessIndex[GCSE], rep(NA, pad_GCSE)),
-                     c(HappinessIndex[Alevel], rep(NA, pad_Alevel)),
-                     c(HappinessIndex[Foun],  rep(NA, pad_Foun)),
-                     c(HappinessIndex[Bdegree], rep(NA, pad_Bdegree)),
-                     c(HappinessIndex[Mdegree], rep(NA, pad_Mdegree)),
-                     c(HappinessIndex[Phd], rep(NA, pad_Phd)))
+Happy_data4 <- cbind(c(WorkplaceHappinessIndex[None], rep(NA, pad_None)),
+                     c(WorkplaceHappinessIndex[GCSE], rep(NA, pad_GCSE)),
+                     c(WorkplaceHappinessIndex[Alevel], rep(NA, pad_Alevel)),
+                     c(WorkplaceHappinessIndex[Foun],  rep(NA, pad_Foun)),
+                     c(WorkplaceHappinessIndex[Bdegree], rep(NA, pad_Bdegree)),
+                     c(WorkplaceHappinessIndex[Mdegree], rep(NA, pad_Mdegree)),
+                     c(WorkplaceHappinessIndex[Phd], rep(NA, pad_Phd)))
 
 
 # Fix rownames
@@ -215,12 +238,12 @@ table(mydata2[,14])
 
 # now use rep to pad out the Not Happy version of Happy index with the missing
 # value NA
-Happy_data5 <- cbind(c(HappinessIndex[lessthanone], rep(NA, pad_lessthanone)),
-                     c(HappinessIndex[onetotwo], rep(NA, pad_onetotwo)),
-                     c(HappinessIndex[twotofive], rep(NA, pad_twotofive)),
-                     c(HappinessIndex[fivetoten],  rep(NA, pad_fivetoten)),
-                     c(HappinessIndex[tentotwenty], rep(NA, pad_tentotwenty)),
-                     c(HappinessIndex[twentyplus], rep(NA, pad_twentyplus)))
+Happy_data5 <- cbind(c(WorkplaceHappinessIndex[lessthanone], rep(NA, pad_lessthanone)),
+                     c(WorkplaceHappinessIndex[onetotwo], rep(NA, pad_onetotwo)),
+                     c(WorkplaceHappinessIndex[twotofive], rep(NA, pad_twotofive)),
+                     c(WorkplaceHappinessIndex[fivetoten],  rep(NA, pad_fivetoten)),
+                     c(WorkplaceHappinessIndex[tentotwenty], rep(NA, pad_tentotwenty)),
+                     c(WorkplaceHappinessIndex[twentyplus], rep(NA, pad_twentyplus)))
 
 
 Happy_data5
@@ -359,5 +382,5 @@ want2test <- want2test[!want2test == ""]
 want2test <- ifelse(want2test == "Yes", TRUE, FALSE)
 # Check numbers
 table(want2test)
-# Mean of a logical vector * 100 gives percetage true
+# Mean of a logical vector * 100 gives percentage true
 round(mean(want2test)* 100, digits = 1)
