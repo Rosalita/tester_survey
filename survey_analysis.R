@@ -9,28 +9,20 @@ mydata <- read.csv("survey_results_raw.csv",
                   header = TRUE, sep =",")
 
 
-# Exclude those not testing currently
+# Make an index of people which are currently testing 
 Current_testers <- which(mydata[,2] == "Yes")
+#Apply this index to the data
 mydata <- mydata[Current_testers,]
 
-# Colnames
-colnames(mydata)
 
-# No. cols and rows etc.
-dim(mydata)
-nrow(mydata)
-ncol(mydata)
-
-# Look at rows 1-6
-head(mydata)
-
-# Sub set out cols 30-53, convert factors to logical vectors
+# Create a sub set of columns 30-53, these are true/false responses to positive and negative questions
+# And convert this sub set to logical vectors
 HappyData <- apply(mydata[,30:53], 2, as.logical)
 
-# Vector index of pos questions
+# Make a vector index of positive questions
 pos_index <- c(1, 2, 4, 7, 8, 10, 11, 12, 14, 15, 20, 21)
 
-# Vector index of neg questions
+# Make a vector index of negative questions
 neg_index <- c(3, 5, 6, 9, 13, 16, 17, 18, 19, 22, 23, 24)
 
 # Pos questions out score up to +12 +1 for each True answer
@@ -38,15 +30,15 @@ pos_score <- rowSums(HappyData[,pos_index])
 # Neg questions out score up to -12 -1 for each True answer 
 neg_score <- -rowSums(HappyData[,neg_index])
 # Add neg and pos scores to make final score
-HappyScore <- pos_score+neg_score
-# Pople at zero are neither happy or sad
-summary(HappyScore)
+HappinessIndex <- pos_score+neg_score
+# People at zero are neither happy or sad
+summary(HappinessIndex)
 
 
 
 # Histogram
-breaks <- c(min(HappyScore):max(HappyScore))
-hist(HappyScore, 
+breaks <- c(min(HappinessIndex):max(HappinessIndex))
+hist(HappinessIndex, 
      breaks = breaks,
      xlim = c(-12,12),
      xlab = "Happyness Score",
@@ -55,9 +47,9 @@ hist(HappyScore,
      main = "Histogram of Tester Happyness"
      )
 axis(1, at = seq(-12, 12, by = 1))
-abline(v = mean(HappyScore), col = "blue", lty = 5, lwd = 2)
+abline(v = mean(HappinessIndex), col = "blue", lty = 5, lwd = 2)
 legend(-12,15,
-       legend=paste0("mean = ", round(mean(HappyScore), digits=1)), 
+       legend=paste0("mean = ", round(mean(HappinessIndex), digits=1)), 
        col = "blue", 
        lty = 5, 
        lwd = 2
@@ -65,8 +57,8 @@ legend(-12,15,
 
 # Next question for each Happyness score how likley are people to change job,
 # nothing impressive here.
-# cbind HappyScore with subsetted mydata
-mydata2 <- cbind(mydata[,1:29],HappyScore)
+# cbind HappinessIndex with subsetted mydata
+mydata2 <- cbind(mydata[,1:29],HappinessIndex)
 leave_factor <- mydata2[,9]
 # Check levels
 levels(leave_factor)
@@ -80,10 +72,10 @@ leave_vector <- as.numeric(as.character(leave_factor))
 Happy <- which(mydata2[,8] == "Yes")
 Not_Happy <- which(mydata2[,8] == "No")
 # prevent vector recycling so find out how many values we are missing
-to_pad <- length(HappyScore[Happy]) - length(HappyScore[Not_Happy])
+to_pad <- length(HappinessIndex[Happy]) - length(HappinessIndex[Not_Happy])
 # now use rep to pad out the Not Happy version of Happy index with the missing
 # value NA
-Happy_data <- cbind(HappyScore[Happy],c(HappyScore[Not_Happy],rep(NA, to_pad)))
+Happy_data <- cbind(HappinessIndex[Happy],c(HappinessIndex[Not_Happy],rep(NA, to_pad)))
 # Fix rownames
 colnames(Happy_data) <- c("Happy", "Not Happy")
 # Finsihed matrix
@@ -113,11 +105,11 @@ VU <- which(mydata2[,9] == "Very unlikely")
 
 # now use rep to pad out the Not Happy version of Happy index with the missing
 # value NA
-Happy_data2 <- cbind(c(HappyScore[VL], rep(NA, pad_VL)),
-                     c(HappyScore[L], rep(NA, pad_L)),
-                     c(HappyScore[N], rep(NA, pad_N)),
-                     c(HappyScore[U],  rep(NA, pad_U)),
-                     c(HappyScore[VU], rep(NA, pad_VU)))
+Happy_data2 <- cbind(c(HappinessIndex[VL], rep(NA, pad_VL)),
+                     c(HappinessIndex[L], rep(NA, pad_L)),
+                     c(HappinessIndex[N], rep(NA, pad_N)),
+                     c(HappinessIndex[U],  rep(NA, pad_U)),
+                     c(HappinessIndex[VU], rep(NA, pad_VU)))
                      
 # Fix rownames
 colnames(Happy_data2) <- c("Very likely", "likely", "Not sure", "Unlikely", "Very unlikely")
@@ -137,10 +129,10 @@ No_CS <- which(mydata2[,18] == "No")
 length(CS)
 length(No_CS)
 # prevent vector recycling so find out how many values we are missing
-to_pad <- length(HappyScore[CS]) - length(HappyScore[No_CS])
+to_pad <- length(HappinessIndex[CS]) - length(HappinessIndex[No_CS])
 # now use rep to pad out the Not Happy version of Happy index with the missing
 # value NA
-Happy_data3 <- cbind(HappyScore[CS],c(HappyScore[No_CS],rep(NA, to_pad)))
+Happy_data3 <- cbind(HappinessIndex[CS],c(HappinessIndex[No_CS],rep(NA, to_pad)))
 # Fix rownames
 colnames(Happy_data3) <- c("Studied Computing", "Did not study computing")
 # Finsihed matrix
@@ -179,13 +171,13 @@ table(mydata2[,17])
 
 # now use rep to pad out the Not Happy version of Happy index with the missing
 # value NA
-Happy_data4 <- cbind(c(HappyScore[None], rep(NA, pad_None)),
-                     c(HappyScore[GCSE], rep(NA, pad_GCSE)),
-                     c(HappyScore[Alevel], rep(NA, pad_Alevel)),
-                     c(HappyScore[Foun],  rep(NA, pad_Foun)),
-                     c(HappyScore[Bdegree], rep(NA, pad_Bdegree)),
-                     c(HappyScore[Mdegree], rep(NA, pad_Mdegree)),
-                     c(HappyScore[Phd], rep(NA, pad_Phd)))
+Happy_data4 <- cbind(c(HappinessIndex[None], rep(NA, pad_None)),
+                     c(HappinessIndex[GCSE], rep(NA, pad_GCSE)),
+                     c(HappinessIndex[Alevel], rep(NA, pad_Alevel)),
+                     c(HappinessIndex[Foun],  rep(NA, pad_Foun)),
+                     c(HappinessIndex[Bdegree], rep(NA, pad_Bdegree)),
+                     c(HappinessIndex[Mdegree], rep(NA, pad_Mdegree)),
+                     c(HappinessIndex[Phd], rep(NA, pad_Phd)))
 
 
 # Fix rownames
@@ -223,12 +215,12 @@ table(mydata2[,14])
 
 # now use rep to pad out the Not Happy version of Happy index with the missing
 # value NA
-Happy_data5 <- cbind(c(HappyScore[lessthanone], rep(NA, pad_lessthanone)),
-                     c(HappyScore[onetotwo], rep(NA, pad_onetotwo)),
-                     c(HappyScore[twotofive], rep(NA, pad_twotofive)),
-                     c(HappyScore[fivetoten],  rep(NA, pad_fivetoten)),
-                     c(HappyScore[tentotwenty], rep(NA, pad_tentotwenty)),
-                     c(HappyScore[twentyplus], rep(NA, pad_twentyplus)))
+Happy_data5 <- cbind(c(HappinessIndex[lessthanone], rep(NA, pad_lessthanone)),
+                     c(HappinessIndex[onetotwo], rep(NA, pad_onetotwo)),
+                     c(HappinessIndex[twotofive], rep(NA, pad_twotofive)),
+                     c(HappinessIndex[fivetoten],  rep(NA, pad_fivetoten)),
+                     c(HappinessIndex[tentotwenty], rep(NA, pad_tentotwenty)),
+                     c(HappinessIndex[twentyplus], rep(NA, pad_twentyplus)))
 
 
 Happy_data5
