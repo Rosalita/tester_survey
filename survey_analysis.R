@@ -1,10 +1,11 @@
 # Survey response analysis
 
 # Set working dir
-setwd("/Users/Rosie/Desktop/")
+# setwd("/Users/Rosie/Desktop/")
+setwd ("/Dev/Git/tester_survey")
 
 # Read in data
-mydata <- read.csv("Software Testing Survey (187).csv", 
+mydata <- read.csv("survey_results_raw.csv", 
                   header = TRUE, sep =",")
 
 
