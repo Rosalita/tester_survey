@@ -1,8 +1,8 @@
 # Survey response analysis
 
 # Set working dir
-# setwd ("/Dev/Git/tester_survey")
-setwd("/git/tester_survey")
+ setwd ("/Dev/Git/tester_survey")
+# setwd("/git/tester_survey")
 
 # Read in data
 mydata <- read.csv("survey_results_raw.csv", 
@@ -73,6 +73,10 @@ legend(-12,15,
 )
 
 length(WorkplaceHappinessIndex)
+
+# Make a new dataframe to work with where all the true false question are replaced by Workplace Happiness Index
+mydata2 <- cbind(mydata[,1:29],WorkplaceHappinessIndex)
+
 
 # Tester happiness compared to workplace happiness index
 # Create an index of all the testers that say they are happy 
