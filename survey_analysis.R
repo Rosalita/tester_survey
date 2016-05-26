@@ -84,7 +84,6 @@ Happy <- which(mydata2[,8] == "Yes")
 # Create an index of all the testers that say they are not happy
 Not_Happy <- which(mydata2[,8] == "No")
 
-
 # Make a vector containing total numbers of Happy and Not Happy testers
 HappyYesNo <- c(length(Happy), length(Not_Happy)) 
 # Generate labels for pie chart containing % of Happy and Not Happy
@@ -97,23 +96,38 @@ pielabels <- paste(pielabels, "%", sep="")
 pie(HappyYesNo, labels = pielabels, col = c("lawngreen", "red"), main = "Are you happy in your current testing job?")
 
 
-# prevent vector recycling so find out how many values we are missing
-to_pad <- length(WorkplaceHappinessIndex[Happy]) - length(WorkplaceHappinessIndex[Not_Happy])
-# now use rep to pad out the Not Happy version of Happy index with the missing
-# value NA
-Happy_data <- cbind(WorkplaceHappinessIndex[Happy],c(WorkplaceHappinessIndex[Not_Happy],rep(NA, to_pad)))
-# Fix rownames
-colnames(Happy_data) <- c("Happy", "Not Happy")
-# Finsihed matrix
-Happy_data
-# Summary
-summary(Happy_data)
+#Look for pattern between testers saying they are happy or not and workplace happiness index
 
-# Now to plot
-boxplot(Happy_data, col = c("darkolivegreen1", "coral2"), ylim=c(-12,12), yaxt = "n", main = 'Happyness index for "Happy" and "Not happy" groups')
+# Padding is needed to prevent vector recycling 
+# find out the difference between number of people that are happy and not happy
+to_pad <- length(WorkplaceHappinessIndex[Happy]) - length(WorkplaceHappinessIndex[Not_Happy])
+# now use rep to pad out the Not Happy vector with missing NA values until it is the same length as the happy vector
+# join two columns together for workplace happiness index of happy and not happy people 
+HappyData <- cbind(WorkplaceHappinessIndex[Happy],c(WorkplaceHappinessIndex[Not_Happy],rep(NA, to_pad)))
+
+#check the median values for happy and not happy groups
+
+median(WorkplaceHappinessIndex[Happy])
+median(WorkplaceHappinessIndex[Not_Happy])
+
+# Fix Column Names on this HappyData
+colnames(HappyData) <- c("Happy", "Not Happy")
+
+# Summary
+summary(HappyData)
+
+# Now box plot the workplace happiness index against testers happiness
+boxplot(HappyData, 
+        col = c("cyan", "red"), 
+        xlab = "Tester Happiness",
+        ylab = "Workplace Happiness Index",
+        ylim=c(-12,12), 
+        yaxt = "n", 
+        main = 'Workplace Happiness Index for Tester Happiness')
 axis(2, at = seq(-12, 12, by = 2))
 
-# Stay or leave boxplot
+
+# Look at workplace happiness index for groups of testers based on how likely they are to look for a new testing job
 # Create indexes first
 VL <- which(mydata2[,9] == "Very Likely")
 L <- which(mydata2[,9] == "Likely")
@@ -121,7 +135,17 @@ N <- which(mydata2[,9] == "Not sure")
 U <- which(mydata2[,9] == "Unlikely")
 VU <- which(mydata2[,9] == "Very unlikely")
 
-# prevent vector recycling so find out how many values we are missing
+# Find the largest group
+length(VL)
+length(L)
+length(N)
+length(U)
+length(VU)
+
+# The largest group is the "unlikely" group
+
+# Prevent vector recycling by padding all the groups so they are the same size as the unlikely group 
+# Find out how much padding needs to be added
 (pad_VL <- length(U) - length(VL))
 (pad_L <- length(U) - length(L))
 (pad_N <- length(U) - length(N))
@@ -129,22 +153,102 @@ VU <- which(mydata2[,9] == "Very unlikely")
 (pad_VU <- length(U) - length(VU))
 
 
-# now use rep to pad out the Not Happy version of Happy index with the missing
-# value NA
-Happy_data2 <- cbind(c(WorkplaceHappinessIndex[VL], rep(NA, pad_VL)),
-                     c(WorkplaceHappinessIndex[L], rep(NA, pad_L)),
-                     c(WorkplaceHappinessIndex[N], rep(NA, pad_N)),
-                     c(WorkplaceHappinessIndex[U],  rep(NA, pad_U)),
-                     c(WorkplaceHappinessIndex[VU], rep(NA, pad_VU)))
+# Use rep function to pad out with the missing value NA, index this against worplace happiness index
+# Then bind this data into a new dataframe
+leave_testing <- cbind(c(WorkplaceHappinessIndex[VL], rep(NA, pad_VL)),
+                       c(WorkplaceHappinessIndex[L], rep(NA, pad_L)),
+                       c(WorkplaceHappinessIndex[N], rep(NA, pad_N)),
+                       c(WorkplaceHappinessIndex[U],  rep(NA, pad_U)),
+                       c(WorkplaceHappinessIndex[VU], rep(NA, pad_VU)))
                      
-# Fix rownames
-colnames(Happy_data2) <- c("Very likely", "likely", "Not sure", "Unlikely", "Very unlikely")
-# Finsihed matrix
-Happy_data2
+# Fix column names
+colnames(leave_testing) <- c("Very likely", "likely", "Not sure", "Unlikely", "Very unlikely")
 
-# Now to plot
-boxplot(Happy_data2, col = c("coral2","chocolate1","darkgoldenrod1","darkolivegreen1","chartreuse4"), ylim=c(-12,12), yaxt = "n")
+#Median values
+median(WorkplaceHappinessIndex[VL])
+median(WorkplaceHappinessIndex[L])
+median(WorkplaceHappinessIndex[N])
+median(WorkplaceHappinessIndex[U])
+median(WorkplaceHappinessIndex[VU])
+
+# Box plox the groups of testers by likelihood to look for a new testing job against workplace happiness index
+
+boxplot(leave_testing, 
+        #col = c("coral2","chocolate1","darkgoldenrod1","darkolivegreen1","chartreuse4"), 
+        col = rainbow(8),
+        xlab = "Likelihood to look for a new testing job",
+        ylab = "Workplace Hapiness Index",
+        ylim=c(-12,12), 
+        yaxt = "n")
 axis(2, at = seq(-12, 12, by = 2))
+
+
+# Make some plots of how long people have worked in testing
+
+
+# Create indexes first
+lessthanone <- which(mydata2[,14] == "less than a year")
+onetotwo <- which(mydata2[,14] == "1 - 2 years")
+twotofive <- which(mydata2[,14] == "2 - 5 years")
+fivetoten <- which(mydata2[,14] == "5 - 10 years")
+tentotwenty <- which(mydata2[,14] == "10 - 20 years")
+twentyplus <- which(mydata2[,14] == "More than 20 years")
+
+table(mydata2[,14])
+
+LTO <- length(lessthanone)
+OTT <- length(onetotwo)
+TTF <- length(twotofive)
+FTT <- length(fivetoten)
+TTT <- length(tentotwenty)
+TP <- length(twentyplus)
+
+#pie chart
+pie(c(LTO, OTT, TTF, FTT, TTT, TP ))
+
+barplot(c(LTO, OTT, TTF, FTT, TTT, TP ), space = NULL, col = rainbow(10), xlab="Duration testing", ylab="Frequency")
+
+
+barplot(studycs, space = NULL, 
+        col = c("seagreen1", "salmon"),
+        beside = FALSE, legend.text=TRUE, xlab="education level", ylab="studied computing")
+
+?barplot
+
+
+# Experience is column 14
+mydata2[,14]
+exp <- mydata2[,14]
+# Check levels
+levels(exp)
+# Reorder levels to be shortest to longest
+exp <- relevel(exp, "", "less than a year", "1 - 2 years", "2 - 5 years", "5 - 10 years", "10 - 20 years", "More than 20 years")
+levels(exp)
+# Get rid of unused factor levels
+exp <- droplevels(exp)
+levels(exp)
+# Check vector
+exp
+test_exp <- table(exp)
+
+# Fix ordering
+test_exp <- test_exp[c(5,1,3,4,2,6)]
+
+# Tidy up naming
+names(test_exp) <- c("Less than 1 year", "1 - 2 years", "2 - 5 years", "5 - 10 years", "10 - 20 years", "20+ years")
+
+barplot (test_exp, space = NULL, 
+         col = rainbow(10), 
+         xlab="Duration testing", 
+         ylab="Frequency")
+
+
+
+
+
+
+
+
 
 
 # Are people who studied CS or related topic more or less happy
@@ -319,7 +423,7 @@ cs <- mydata2[,18]
 cs <- cs[index]
 cs <- droplevels(cs)
 studycs <- table(cs, edu)
-# Fix odering
+# Fix ordering
 studycs <- studycs[c(2,1),c(5,1,4,2,6,3)]
 
 
