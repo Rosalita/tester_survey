@@ -1,8 +1,8 @@
 # Survey response analysis
 
 # Set working dir
- setwd ("/Dev/Git/tester_survey")
-# setwd("/git/tester_survey")
+# setwd ("/Dev/Git/tester_survey")
+ setwd("/git/tester_survey")
 
 # Read in data
 mydata <- read.csv("survey_results_raw.csv", 
@@ -10,7 +10,7 @@ mydata <- read.csv("survey_results_raw.csv",
 
 ###################################################
 
-#                 Section 1
+# Section 1 - Why is it difficult to hire testers
 
 ###################################################
 
@@ -203,17 +203,19 @@ FTT <- length(fivetoten)
 TTT <- length(tentotwenty)
 TP <- length(twentyplus)
 
-#pie chart
-pie(c(LTO, OTT, TTF, FTT, TTT, TP ))
+plotcolnames <- c("0 - 1", "1 - 2", "2 - 5", "5 - 10", "10 - 20", "20+") 
 
-barplot(c(LTO, OTT, TTF, FTT, TTT, TP ), space = NULL, col = rainbow(10), xlab="Duration testing", ylab="Frequency")
+barplot(c(LTO, OTT, TTF, FTT, TTT, TP ), 
+        space = NULL, 
+        names.arg = plotcolnames,
+        col = rainbow(10), 
+        ylim = c(0,60),
+        xlab="Duration testing in years", 
+        ylab="Frequency")
+axis(2,at=seq(0,60,10))
 
 
-barplot(studycs, space = NULL, 
-        col = c("seagreen1", "salmon"),
-        beside = FALSE, legend.text=TRUE, xlab="education level", ylab="studied computing")
 
-?barplot
 
 
 # Experience is column 14
