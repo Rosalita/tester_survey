@@ -4,7 +4,7 @@
 
 # Set working dir
 # setwd ("/Dev/Git/tester_survey")
-setwd("/git/tester_survey")
+setwd("~/git/tester_survey")
 
 # Read in data
 mydata <- read.csv("survey_results_raw.csv", 
@@ -177,14 +177,15 @@ boxplot(leave_testing,
         #col = c("coral2","chocolate1","darkgoldenrod1","darkolivegreen1","chartreuse4"), 
         col = rainbow(8),
         xlab = "Likelihood to look for a new testing job",
-        ylab = "Workplace Hapiness Index",
+        ylab = "Workplace Happiness Index",
         ylim=c(-12,12), 
-        yaxt = "n")
+        yaxt = "n",
+        main = "Workplace Happiness vs likelihood to leave"
+        )
 axis(2, at = seq(-12, 12, by = 2))
 
 
 # Make some plots of how long people have worked in testing
-
 
 # Create indexes first
 lessthanone <- which(mydata2[,14] == "less than a year")
@@ -211,7 +212,9 @@ barplot(c(LTO, OTT, TTF, FTT, TTT, TP ),
         col = rainbow(10), 
         ylim = c(0,60),
         xlab="Duration testing in years", 
-        ylab="Frequency")
+        ylab="Frequency",
+        main="Testing experience"
+        )
 axis(2,at=seq(0,60,10))
 
 
@@ -226,8 +229,13 @@ experience <- c(lessthantwoyears, morethantwoyears)
 # Generate labels for a pie chart containing % of lessthan and morethan
 pielabels <- c("Less than 2 years", "More than 2 years")
 percent <- round(experience/sum(experience)* 100, digits = 1)
-pielabels <- paste(pielabels, percent)    
+pielabels <- paste0(pielabels, "\n", percent)    
 pielabels <- paste(pielabels, "%", sep="")
 
 #Plot a pie chart of two years experience
-pie(experience, labels = pielabels, col = c("lawngreen", "red"), main = "Tester experience levels")
+pie(experience, 
+    labels = pielabels, 
+    col = c("lawngreen", "red"), 
+    main = "Tester experience levels",
+    cex = 1)
+
