@@ -64,7 +64,7 @@ Would you work in testing again?
 * Yes
 * No
 
-Continue to next section
+Go to section 5
 
 #Section 4 of 9
 

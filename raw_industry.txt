@@ -22,6 +22,10 @@ Finance
 Pharmaceutical
 Social Media
 Business
+Electronics
+Games
+Social Media
+Business
 Communications
 Finance
 Government
@@ -154,6 +158,10 @@ Television
 Communications
 Social Media
 Business
+Communications
+Finance
+E-commerce
+Business
 Games
 Legal
 Social Media
@@ -236,6 +244,9 @@ Sales
 Communications
 Electronics
 Sales
+Communications
+Finance
+software
 Finance
 Finance
 Sales
@@ -405,6 +416,9 @@ Gambling
 Business
 Entertainment
 Business
+Social Media
+Online database
+Business
 Communications
 Web platform
 Energy
@@ -442,6 +456,7 @@ Finance
 Government
 Health
 Social Media
+travel
 Business
 Electronics
 Sales

@@ -9,8 +9,8 @@ Business
 Energy
 Finance
 Government
-Energy
 Housing
+Energy
 Travel
 Business
 Communications
@@ -21,6 +21,10 @@ Finance
 Business
 Finance
 Pharmaceutical
+Social Media
+Business
+Electronics
+Games
 Social Media
 Business
 Communications
@@ -48,8 +52,8 @@ Business
 Government
 Finance
 Sales
-Logistics
 Manufacturing
+Logistics
 Electronics
 Business
 Energy
@@ -61,6 +65,7 @@ Charity
 Public Sector
 Aerospace
 Finance
+Software Tools
 Business
 Insurance
 Geospatial
@@ -154,9 +159,13 @@ Health
 Health
 Communications
 Military
-Entertainment
+Television
 Communications
 Social Media
+Business
+Communications
+Finance
+E-commerce
 Business
 Games
 Legal
@@ -166,14 +175,14 @@ Government
 Communications
 Finance
 Sales
-Retail and E-commerce
+E-commerce
 Business
 Communications
 Games
 Sales
 Social Media
-Business
 Entertainment
+Business
 Finance
 Business
 Finance
@@ -214,11 +223,12 @@ Business
 Finance
 Education
 Health
-Retail and Retail and E-commerce
+Retail
 Business
 Health
 Business
-Media and Publishing
+Media
+Publishing
 Aerospace
 Automotive
 Business
@@ -241,6 +251,8 @@ Sales
 Communications
 Electronics
 Sales
+Communications
+Finance
 Finance
 Finance
 Sales
@@ -255,9 +267,9 @@ Communications
 Finance
 Government
 Communications
+E-commerce
 Business
 Security
-Retail and E-commerce
 Business
 Government
 Health
@@ -290,7 +302,7 @@ Business
 Communications
 Finance
 Finance
-Transport
+Tolling
 Communications
 Health
 Scientific
@@ -328,6 +340,7 @@ Social Media
 Automotive
 Social Media
 Business
+Sports
 Entertainment
 Government
 Transport
@@ -348,8 +361,9 @@ Automotive
 Business
 Electronics
 Health
-Media and Publishing
 Security
+Media
+Web Services
 Business
 Government
 Legal
@@ -365,8 +379,8 @@ Insurance
 Sales
 Education
 Communications
+Retail
 Gambling
-Retail and Retail and E-commerce
 Business
 Communications
 Electronics
@@ -374,6 +388,7 @@ Finance
 Aerospace
 Games
 Finance
+Business
 Games
 Sales
 Social Media
@@ -381,8 +396,8 @@ Pharmaceutical
 Scientific
 Business
 Energy
-Retail and E-commerce
-Retail and Retail and E-commerce
+Retail
+E-commerce
 HR
 Travel
 Social Media
@@ -416,7 +431,10 @@ Gambling
 Business
 Entertainment
 Business
+Social Media
+Business
 Communications
+Web Services
 Energy
 Health
 Aerospace
@@ -452,6 +470,7 @@ Finance
 Government
 Health
 Social Media
+Travel
 Business
 Electronics
 Sales
@@ -460,14 +479,19 @@ Marketing
 Communications
 Health
 Social Media
+E-commerce
 Logistics
-Retail and E-commerce
+Parking
+Hotels
+Car Hire
 Insurance
+Insurance
+Travel
 Travel
 Finance
-Travel
 Insurance
 Travel
+Tourism
 Automotive
 Business
 Finance
@@ -486,8 +510,8 @@ Automotive
 Social Media
 Sales
 Sales
-Logistics
 Manufacturing
+Logistics
 Automotive
 Intelligence
 Legal
@@ -504,6 +528,7 @@ Insurance
 Education
 Gambling
 Social Media
+Web Services
 Business
 Finance
 Automotive
