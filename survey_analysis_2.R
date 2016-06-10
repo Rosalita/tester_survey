@@ -20,6 +20,7 @@ mydata <- read.csv("survey_results_raw.csv",
 # Make an index which ignores people that have never worked in software testing
 testers <- which(mydata[,3] != "No")
 
+
 # Apply this index to only get data for all the testers
 mydata <- mydata[testers,]
 
@@ -208,11 +209,16 @@ freq <- c(length(Aerospace),
 ind_data <- data.frame(industry_names,freq)
 
 
-# Find total number of values
-total <- sum(ind_data[,2])
+# Find total number of tester 
+total <- length(testers)
 
-# Use this sum to calculate the %
+# Use total number of tester to calculate the relative frequency
 relfreq <- round(ind_data[,2]/total, digits =4)
 
-ind_data2 <- cbind(ind_data, relfreq)
+#bind the relative frequency on to the industry data frame
+ind_data <- cbind(ind_data, relfreq)
 
+#sort the dataframe by relative frequency, largest first
+ind_data <- ind_data[order(ind_data$relfreq, decreasing = TRUE) ,] 
+
+#todo find mean number of industries tested in
