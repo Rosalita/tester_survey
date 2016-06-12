@@ -4,13 +4,14 @@
 
 # Set working dir
 # setwd ("/Dev/Git/tester_survey")
-setwd("/git/tester_survey")
+setwd("~/git/tester_survey")
 
 # Read in data
 mydata <- read.csv("survey_results_raw.csv", 
                    header = TRUE, sep =",")
 
 # Load treemap package
+# install.packages("treemap")
 library(treemap)
 
 
@@ -55,7 +56,7 @@ write(industry, file = "raw_industry.txt")
 clean_industry <- scan(file = "clean_industry.txt", what = character(), sep = "\n")
 
 # Tabulate industry frequencies
-ind_tab <- table(clean_industrys)
+ind_tab <- table(clean_industry)
 
 # As a data frame
 ind_df <-data.frame(ind_tab)
@@ -83,17 +84,36 @@ library(RColorBrewer)
 display.brewer.all()
 
 # Treemap
-png(filename = "treeplot.png", width = 600, height = 400, units = "px")
+png(filename = "treeplot.png", width = 600, height = 500, units = "px")
 treemap(ind_data,
         index="combined",
-        title="Number of Testers in Industry",
-        title.legend = "",
+        title="Testers by Industry",
+        title.legend = "Total testers per industry",
         vSize="Freq",
         vColor = "Freq",
         type = "dens",
         aspRatio = NA,
         inflate.labels = FALSE,
-        
-        palette=rainbow(47, s = 1, start = 0, end = 0.8)
-        )
+        fontsize.labels = 14,
+        fontsize.title = 14,
+        lowerbound.cex.labels = 0,
+        palette=rainbow(47, s = 1, start = 0, end = 0.8))
+dev.off()
+
+# Treemap HD
+png(filename = "treeplotHD.png", width = 1920, height = 1080, units = "px")
+treemap(ind_data,
+        index="combined",
+        title="Testers by Industry",
+        title.legend = "Total testers per industry",
+        vSize="Freq",
+        vColor = "Freq",
+        type = "dens",
+        aspRatio = NA,
+        inflate.labels = FALSE,
+        fontsize.labels = 32,
+        fontsize.title = 32,
+        fontsize.legend = 32,
+        lowerbound.cex.labels = 0,
+        palette=rainbow(47, s = 1, start = 0, end = 0.8))
 dev.off()
