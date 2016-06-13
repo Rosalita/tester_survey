@@ -3,8 +3,8 @@
 # testingfuntime.blogspot.co.uk
 
 # Set working dir
-# setwd ("/Dev/Git/tester_survey")
-setwd("~/git/tester_survey")
+ setwd ("/Dev/Git/tester_survey")
+#setwd("~/git/tester_survey")
 
 # Read in data
 mydata <- read.csv("survey_results_raw.csv", 
@@ -82,12 +82,12 @@ ind_data <- cbind(ind_data, combined)
 # Display all the RColourBrewer palettes
 library(RColorBrewer)
 display.brewer.all()
-
+?treemap
 # Treemap
 png(filename = "treeplot.png", width = 600, height = 500, units = "px")
 treemap(ind_data,
         index="combined",
-        title="Testers by Industry",
+        title="Tester Industry Experience",
         title.legend = "Total testers per industry",
         vSize="Freq",
         vColor = "Freq",
@@ -95,7 +95,7 @@ treemap(ind_data,
         aspRatio = NA,
         inflate.labels = FALSE,
         fontsize.labels = 14,
-        fontsize.title = 14,
+        fontsize.title = 18,
         lowerbound.cex.labels = 0,
         palette=rainbow(47, s = 1, start = 0, end = 0.8))
 dev.off()
@@ -104,7 +104,7 @@ dev.off()
 png(filename = "treeplotHD.png", width = 1920, height = 1080, units = "px")
 treemap(ind_data,
         index="combined",
-        title="Testers by Industry",
+        title="Tester Industry Experience",
         title.legend = "Total testers per industry",
         vSize="Freq",
         vColor = "Freq",
@@ -117,3 +117,43 @@ treemap(ind_data,
         lowerbound.cex.labels = 0,
         palette=rainbow(47, s = 1, start = 0, end = 0.8))
 dev.off()
+
+# Find all the testers that have only test in one industry
+
+# Make an index that includes row numbers of single industry only testers
+justone <- c(4,6,11,17,21,28,29,30,31,43,44,45,52,60,
+             70,71,77,78,83,88,94,103,108,110,115,118,
+             128,136,138,144,145,162,168,172,173,175)
+
+# Invert this index to get an index for testers which have tested in multiple industries
+all <- c(1:186)
+multi <- all [! all %in% justone]
+
+
+# Apply these indexes to my data
+one_industry <- mydata[justone,]
+multi_industry <- mydata[multi,]
+
+# Get number of industries
+total_one <- nrow(mydata[justone,])
+total_multi <- nrow(mydata[multi,])
+
+perc <- c(round(total_one /186 * 100, digits = 1),round(total_multi /186 * 100, digits = 1) )
+
+colnames <- c("Tested in only one Industry", "Tested in multiple industries")
+
+colnames <- paste0(colnames, "\n", perc, "%"  )
+
+ind_comp <- c(total_one, total_multi)
+barplot(ind_comp,
+        space = NULL,
+        col = rainbow(10), 
+        names.arg = colnames,
+        main="Industry Experience",
+        ylim  = c(0,160),
+        ylab="Number of testers"
+        )
+
+
+
+
