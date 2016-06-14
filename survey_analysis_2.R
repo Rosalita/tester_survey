@@ -1,5 +1,5 @@
 # Survey response analysis
-# 2016 Rosie Hamilton 
+# 2016 Rosie Hamilton
 # testingfuntime.blogspot.co.uk
 
 # Set working dir
@@ -7,7 +7,7 @@
 #setwd("~/git/tester_survey")
 
 # Read in data
-mydata <- read.csv("survey_results_raw.csv", 
+mydata <- read.csv("survey_results_raw.csv",
                    header = TRUE, sep =",")
 
 # Load treemap package
@@ -35,7 +35,7 @@ industry <- mydata[,15]
 # Check the structure of industry, currently a factor with 151 levels
 str(industry)
 
-# Convert industry to character which will allow each response to be split up 
+# Convert industry to character which will allow each response to be split up
 industry <- as.character(industry)
 
 # Split all the industry data on ; to get a list of industries
@@ -44,12 +44,12 @@ industry <- strsplit(industry, split=";")
 # Unlist the industries
 industry <- unlist(industry)
 
-# Write all these industries to a file so can manually clean up the "other" industry field 
+# Write all these industries to a file so can manually clean up the "other" industry field
 write(industry, file = "raw_industry.txt")
 
 # Clean up done by splitting each industry listed in the "other" field onto a new line
 # Clean up gave multiple industries with similar names the same name with the same case sensitivity
-# E.g. "online gambling" and "gambling" and "betting" were renamed to "Gambling". 
+# E.g. "online gambling" and "gambling" and "betting" were renamed to "Gambling".
 
 
 # Read the cleaned data back in
@@ -71,7 +71,7 @@ relfreq <- ind_df[,2]/total
 ind_data <- cbind(ind_df, relfreq)
 
 # Sort the data frame by relative frequency, largest first
-ind_data <- ind_data[order(ind_data$relfreq, decreasing = TRUE) ,] 
+ind_data <- ind_data[order(ind_data$relfreq, decreasing = TRUE) ,]
 
 # Make new col
 combined <- paste0(ind_data[,1], "\n", round(ind_data[,3] * 100, digits = 1), "%"  )
@@ -147,7 +147,7 @@ colnames <- paste0(colnames, "\n", perc, "%"  )
 ind_comp <- c(total_one, total_multi)
 barplot(ind_comp,
         space = NULL,
-        col = rainbow(10), 
+        col = rainbow(10),
         names.arg = colnames,
         main="Industry Experience",
         ylim  = c(0,160),
@@ -164,6 +164,32 @@ dontleave <- one_industry[,15]
 
 long_dont_leave <- which (one_industry[,14] !="less than a year")
 short_dont_leave <- which (one_industry[,14] == "less than a year")
-                      
-long_dont_leave <- one_industry[long_dont_leave,]          
+
+long_dont_leave <- one_industry[long_dont_leave,]
 short_dont_leave <- one_industry[short_dont_leave,]
+
+# Experience is column 14
+mydata[,14]
+exp <- mydata[,14]
+# Check levels
+levels(exp)
+# Reorder levels to be shortest to longest
+exp <- relevel(exp, "", "less than a year", "1 - 2 years", "2 - 5 years", "5 - 10 years", "10 - 20 years", "More than 20 years")
+levels(exp)
+# Get rid of unused factor levels
+exp <- droplevels(exp)
+levels(exp)
+# Check vector
+exp
+test_exp <- table(exp)
+
+# Fix ordering
+test_exp <- test_exp[c(5,1,3,4,2,6)]
+
+# Tidy up naming
+names(test_exp) <- c("Less than 1 year", "1 - 2 years", "2 - 5 years", "5 - 10 years", "10 - 20 years", "20+ years")
+
+barplot (test_exp, space = NULL,
+         col = rainbow(10),
+         xlab="Duration testing",
+         ylab="Frequency")
