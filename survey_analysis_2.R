@@ -156,4 +156,14 @@ barplot(ind_comp,
 
 
 
+# Some of the Industries testers have entered and not left
 
+dontleave <- one_industry[,15]
+
+#make an index of testers in one industry which have worked longer than a year
+
+long_dont_leave <- which (one_industry[,14] !="less than a year")
+short_dont_leave <- which (one_industry[,14] == "less than a year")
+                      
+long_dont_leave <- one_industry[long_dont_leave,]          
+short_dont_leave <- one_industry[short_dont_leave,]
