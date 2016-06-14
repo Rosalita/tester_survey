@@ -3,8 +3,8 @@
 # testingfuntime.blogspot.co.uk
 
 # Set working dir
- setwd ("/Dev/Git/tester_survey")
-#setwd("~/git/tester_survey")
+#setwd ("/Dev/Git/tester_survey")
+setwd("/git/tester_survey")
 
 # Read in data
 mydata <- read.csv("survey_results_raw.csv",
@@ -156,40 +156,56 @@ barplot(ind_comp,
 
 
 
-# Some of the Industries testers have entered and not left
+#are testers skills more likely to be valued the longer they have worked in testing
 
-dontleave <- one_industry[,15]
 
-#make an index of testers in one industry which have worked longer than a year
 
-long_dont_leave <- which (one_industry[,14] !="less than a year")
-short_dont_leave <- which (one_industry[,14] == "less than a year")
+lessthanone <- which(mydata[,14] == "less than a year")
+onetotwo <- which(mydata[,14] == "1 - 2 years")
+twotofive <- which(mydata[,14] == "2 - 5 years")
+fivetoten <- which(mydata[,14] == "5 - 10 years")
+tentotwenty <- which(mydata[,14] == "10 - 20 years")
+twentyplus <- which(mydata[,14] == "More than 20 years")
 
-long_dont_leave <- one_industry[long_dont_leave,]
-short_dont_leave <- one_industry[short_dont_leave,]
+lessthanone_skills <- mydata[lessthanone,37]
+onetotwo_skills <- mydata[onetotwo ,37]
+twotofive_skills <- mydata[twotofive,37]
+fivetoten_skills <- mydata[fivetoten ,37]
+tentotwenty_skills <- mydata[tentotwenty,37]
+twentyplus_skills <- mydata[twentyplus,37]
 
-# Experience is column 14
-mydata[,14]
-exp <- mydata[,14]
-# Check levels
-levels(exp)
-# Reorder levels to be shortest to longest
-exp <- relevel(exp, "", "less than a year", "1 - 2 years", "2 - 5 years", "5 - 10 years", "10 - 20 years", "More than 20 years")
-levels(exp)
-# Get rid of unused factor levels
-exp <- droplevels(exp)
-levels(exp)
-# Check vector
-exp
-test_exp <- table(exp)
 
-# Fix ordering
-test_exp <- test_exp[c(5,1,3,4,2,6)]
+LTO <- table(lessthanone_skills)
+LTO_perc <- c(LTO[2] /(LTO[3]+ LTO[2]),LTO[3] /(LTO[3]+ LTO[2]))
 
-# Tidy up naming
-names(test_exp) <- c("Less than 1 year", "1 - 2 years", "2 - 5 years", "5 - 10 years", "10 - 20 years", "20+ years")
+OTT <- table(onetotwo_skills)
+OTT_perc <- c(OTT[2] /(OTT[3]+ OTT[2]),OTT[3] /(OTT[3]+ OTT[2]))
 
-barplot (test_exp, space = NULL,
-         col = rainbow(10),
-         xlab="Duration testing",
-         ylab="Frequency")
+TTF <- table(twotofive_skills)
+TTF_perc <- c(TTF[2] /(TTF[3]+ TTF[2]),TTF[3] /(TTF[3]+ TTF[2]))
+
+FTT <- table(fivetoten_skills)
+FTT_perc <- c(FTT[2] /(FTT[3]+ FTT[2]),FTT[3] /(FTT[3]+ FTT[2]))
+
+TTT <- table(tentotwenty_skills)
+TTT_perc <- c(TTT[2] /(TTT[3]+ TTT[2]),TTT[3] /(TTT[3]+ TTT[2]))
+
+TP <- table(twentyplus_skills)
+TP_perc <- c(TP[2] /(TP[3]+ TP[2]),TP[3] /(TP[3]+ TP[2]))
+
+LTO_perc
+OTT_perc
+TTF_perc
+FTT_perc
+TTT_perc 
+TP_perc
+
+#up to two years is less than 1 plus one to two
+UTT <- LTO + OTT
+UTT_perc <- c(UTT[2] /(UTT[3]+ UTT[2]),UTT[3] /(UTT[3]+ UTT[2]))
+
+
+barplot(c(UTT_perc, TTF_perc, FTT_perc, TTT_perc, TP_perc),
+        col= rainbow(30))
+
+
