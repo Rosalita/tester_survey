@@ -167,12 +167,24 @@ fivetoten <- which(mydata[,14] == "5 - 10 years")
 tentotwenty <- which(mydata[,14] == "10 - 20 years")
 twentyplus <- which(mydata[,14] == "More than 20 years")
 
+
 lessthanone_skills <- mydata[lessthanone,37]
 onetotwo_skills <- mydata[onetotwo ,37]
 twotofive_skills <- mydata[twotofive,37]
 fivetoten_skills <- mydata[fivetoten ,37]
 tentotwenty_skills <- mydata[tentotwenty,37]
 twentyplus_skills <- mydata[twentyplus,37]
+
+#All the vectors we just made have three factors so drop levels to make them have 2 factors
+str(lessthanone_skills)
+
+#so drop levels so that they are just two factors
+lessthanone_skills <- droplevels(lessthanone_skills)
+onetotwo_skills <- droplevels(onetotwo_skills)
+twotofive_skills <- droplevels(twotofive_skills)
+fivetoten_skills <- droplevels(fivetoten_skills)
+tentotwenty_skills <- droplevels(tentotwenty_skills)
+twentyplus_skills <- droplevels(twentyplus_skills)
 
 
 LTO <- table(lessthanone_skills)
@@ -204,17 +216,9 @@ TP_perc
 UTT <- LTO + OTT
 UTT_perc <- c(UTT[2] /(UTT[3]+ UTT[2]),UTT[3] /(UTT[3]+ UTT[2]))
 
-#less than one skills is a vector of three factors
-str(lessthanone_skills)
-
-#get rid of the unused factor
-                    
-lessthanone_skills <- droplevels(lessthanone_skills)
-str(lessthanone_skills)
 
 
-barplot(c(UTT_perc, TTF_perc, FTT_perc, TTT_perc, TP_perc),
-        col= rainbow(30))
+barplot(c(UTT_perc, TTF_perc, FTT_perc, TTT_perc, TP_perc), col= rainbow(30))
 
 
 
