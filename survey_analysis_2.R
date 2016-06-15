@@ -3,8 +3,8 @@
 # testingfuntime.blogspot.co.uk
 
 # Set working dir
-#setwd ("/Dev/Git/tester_survey")
-setwd("/git/tester_survey")
+setwd ("/Dev/Git/tester_survey")
+#setwd("/git/tester_survey")
 
 # Read in data
 mydata <- read.csv("survey_results_raw.csv",
@@ -204,8 +204,17 @@ TP_perc
 UTT <- LTO + OTT
 UTT_perc <- c(UTT[2] /(UTT[3]+ UTT[2]),UTT[3] /(UTT[3]+ UTT[2]))
 
+#less than one skills is a vector of three factors
+str(lessthanone_skills)
+
+#get rid of the unused factor
+                    
+lessthanone_skills <- droplevels(lessthanone_skills)
+str(lessthanone_skills)
+
 
 barplot(c(UTT_perc, TTF_perc, FTT_perc, TTT_perc, TP_perc),
         col= rainbow(30))
+
 
 
