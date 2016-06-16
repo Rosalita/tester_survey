@@ -266,8 +266,8 @@ barplot(c(N_sum, G_sum, A_sum, F_sum, B_sum, M_sum, P_sum),
 )
 axis(2,at=seq(0,90,10))
 
-phd_perc <- round((P_sum / total)*100, digits =4)
-bd_perc <-  round((B_sum / total)*100, digits =4)
+phd_perc <- round((P_sum / total)*100, digits =2)
+bd_perc <-  round((B_sum / total)*100, digits =2)
 
 
 
@@ -289,9 +289,27 @@ pie(has_degree,
     col = rainbow(7, start =0.35),
     main = "Are testers graduates?")
 
+#duration of testing career vs level of education - hmm how can I plot this?
+
+#indexs for duration of career
+lessthanone <- which(mydata[,14] == "less than a year")
+onetotwo <- which(mydata[,14] == "1 - 2 years")
+twotofive <- which(mydata[,14] == "2 - 5 years")
+fivetoten <- which(mydata[,14] == "5 - 10 years")
+tentotwenty <- which(mydata[,14] == "10 - 20 years")
+twentyplus <- which(mydata[,14] == "More than 20 years")
 
 
-#tester training
+edu_lessthanone <- mydata[lessthanone,17]
+edu_onetotwo <- mydata[onetotwo,17]
+edu_twotofive <- mydata[twotofive,17]
+edu_fivetoten <- mydata[fivetoten,17]
+edu_tentotwenty <- mydata[tentotwenty,17]
+edu_twentyplus <- mydata[twentyplus,17]
+
+
+
+#tester training - need some kind of snapshot of training courses
 
 
 
