@@ -317,22 +317,25 @@ pie(has_degree,
 #duration of testing career vs level of education - hmm how can I plot this?
 
 #indexs for duration of career
-lessthanone <- which(mydata[,14] == "less than a year")
-onetotwo <- which(mydata[,14] == "1 - 2 years")
-twotofive <- which(mydata[,14] == "2 - 5 years")
-fivetoten <- which(mydata[,14] == "5 - 10 years")
-tentotwenty <- which(mydata[,14] == "10 - 20 years")
-twentyplus <- which(mydata[,14] == "More than 20 years")
+#lessthanone <- which(mydata[,14] == "less than a year")
+#onetotwo <- which(mydata[,14] == "1 - 2 years")
+#twotofive <- which(mydata[,14] == "2 - 5 years")
+#fivetoten <- which(mydata[,14] == "5 - 10 years")
+#tentotwenty <- which(mydata[,14] == "10 - 20 years")
+#twentyplus <- which(mydata[,14] == "More than 20 years")
 
 
-edu_lessthanone <- mydata[lessthanone,17]
-edu_onetotwo <- mydata[onetotwo,17]
-edu_twotofive <- mydata[twotofive,17]
-edu_fivetoten <- mydata[fivetoten,17]
-edu_tentotwenty <- mydata[tentotwenty,17]
-edu_twentyplus <- mydata[twentyplus,17]
+#edu_lessthanone <- mydata[lessthanone,14:17]
+#edu_onetotwo <- mydata[onetotwo,17]
+#edu_twotofive <- mydata[twotofive,17]
+#edu_fivetoten <- mydata[fivetoten,17]
+#edu_tentotwenty <- mydata[tentotwenty,17]
+#edu_twentyplus <- mydata[twentyplus,17]
 
+exp_edu_cols <- c(14, 17)
 
+exp_edu <- mydata[,exp_edu_cols]
+ 
 
 #tester training - need some kind of snapshot of training courses
 
