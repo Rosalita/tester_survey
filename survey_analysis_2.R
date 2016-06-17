@@ -3,8 +3,8 @@
 # testingfuntime.blogspot.co.uk
 
 # Set working dir
-#setwd ("/Dev/Git/tester_survey")
-setwd("~/git/tester_survey")
+setwd ("/Dev/Git/tester_survey")
+#setwd("~/git/tester_survey")
 
 # Read in data
 mydata <- read.csv("survey_results_raw.csv",
@@ -40,6 +40,33 @@ industry <- as.character(industry)
 
 # Split all the industry data on ; to get a list of industries
 industry <- strsplit(industry, split=";")
+
+# Figure out which testers have n number of answers in industry
+indy_counter <- function(x) {
+  count <- length(industry[[x]])
+  return(count)
+}
+# sapply function to industry to get index
+counts <- sapply(1:length(industry), indy_counter)
+
+# Which testers have only worked in one industry
+only_one_indy_index <- which(counts == 1 )
+
+# Of these filter out those with free text responses for more than one word i.e. industry
+# Grepl returns logical vector, Regex used matches on one or more white spaces between start and end
+only_one_indy_index2 <- only_one_indy_index[grepl("^\\S+$", industry[only_one_indy_index])]
+
+# Check that index lists all rows that only have 1 industry listed
+mydata[only_one_indy_index2,15] 
+
+# Observed that index missing single industry "social media" as it has a space in it
+# Manually added the missing "social media" rows
+only_one_indy_index2 <- c(only_one_indy_index2, 136, 173)
+only_one_indy_index2 <-  sort(only_one_indy_index2)
+
+# Check result by filtering the industries - good,  "social media" appears now
+only_one_indy <- unlist(industry[only_one_indy_index2])
+
 
 # Unlist the industries
 industry <- unlist(industry)
@@ -120,12 +147,10 @@ dev.off()
 
 # Find all the testers that have only test in one industry
 
-# Make an index that includes row numbers of single industry only testers
-justone <- c(4,6,11,17,21,28,29,30,31,43,44,45,52,60,
-             70,71,77,78,83,88,94,103,108,110,115,118,
-             128,136,138,144,145,162,168,172,173,175)
+justone <- only_one_indy_index2
 
-# Invert this index to get an index for testers which have tested in multiple industries
+# Invert the just one index to get an index for testers which have tested in multiple industries
+
 all <- c(1:186)
 multi <- all [! all %in% justone]
 
