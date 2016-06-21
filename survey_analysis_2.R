@@ -418,7 +418,7 @@ barplot(matrix_edu_exp_perc,
         ylim = c(0,1),
        # xlim = c(0,5),
         xlab="Years Testing", 
-        ylab="Frequency %",
+        ylab="Percentage of Group",
         main="Experience levels of testers by education group"
       # legend.text = rownames(matrix_edu_exp),
         )
