@@ -308,34 +308,127 @@ pielabels <- paste(pielabels, percent)
 pielabels <- paste(pielabels, "%", sep="")
 
 
-#Plot a pie chart 
+# Plot a pie chart 
 pie(has_degree, 
     labels = pielabels, 
     col = rainbow(7, start =0.35),
     main = "Are testers graduates?")
 
-#duration of testing career vs level of education - hmm how can I plot this?
-
-#indexs for duration of career
-#lessthanone <- which(mydata[,14] == "less than a year")
-#onetotwo <- which(mydata[,14] == "1 - 2 years")
-#twotofive <- which(mydata[,14] == "2 - 5 years")
-#fivetoten <- which(mydata[,14] == "5 - 10 years")
-#tentotwenty <- which(mydata[,14] == "10 - 20 years")
-#twentyplus <- which(mydata[,14] == "More than 20 years")
 
 
-#edu_lessthanone <- mydata[lessthanone,14:17]
-#edu_onetotwo <- mydata[onetotwo,17]
-#edu_twotofive <- mydata[twotofive,17]
-#edu_fivetoten <- mydata[fivetoten,17]
-#edu_tentotwenty <- mydata[tentotwenty,17]
-#edu_twentyplus <- mydata[twentyplus,17]
+# Duration of testing career vs level of education 
 
-exp_edu_cols <- c(14, 17)
+# Make an index of non-graduates by grepping for None, GCSE, A-Level or foundation course
 
-exp_edu <- mydata[,exp_edu_cols]
+nongrad <- grep("None|GCSE|A-Level|Foundation", mydata[,17])
+
+# Invert the non-graduate index to get the graduate index
+
+all <- c(1:186)
+grads <- all [! all %in% nongrad]
+
+# Test the indexes to make sure they are correct
+mydata[nongrad,17]
+mydata[grads,17]
+
+# Apply the nongrad index to the years experience column
+nongradexp <- mydata[nongrad,14]
+
+# Apply the grad index to the years experience column
+gradexp <- mydata[grads,14]
+
+# nongradexp and gradexp are factor w/ 7 levels, one of which is ""
+str(nongradexp)
+str(gradexp)
+
+# Drop the unused "" levels to make them factors w/ 6 levels
+nongradexp <- droplevels(nongradexp)
+gradexp <- droplevels(gradexp)
+
+
+# Check levels
+levels(nongradexp)
+levels(gradexp) # Gradexp is missing "More than 20 years" because it was accidently removed by droplevels
+
+# Manually force the "More than 20 years" level back in
+levels(gradexp)[6] <- "More than 20 years"
+
+# Check graduate exp now has "More than 20 years" again
+levels(gradexp)
+
+# Reorder levels from shortest to longest
+nongradexp <- relevel(nongradexp, "less than a year", "1 - 2 years", "2 - 5 years", "5 - 10 years", "10 - 20 years", "More than 20 years")
+gradexp <- relevel(gradexp, "less than a year", "1 - 2 years", "2 - 5 years", "5 - 10 years", "10 - 20 years", "More than 20 years")
+
+
+# Generate tables of experience for non grads and grads
+nongradtab <- table(nongradexp)
+gradtab <- table(gradexp)
+
+
+# Group both tables together
+groupdata <- c(nongradtab, gradtab)
+
+
+# Get this data into a matrix
+matrix_edu_exp = matrix(groupdata, ncol=6, byrow= TRUE)
+
+#Label the columns and rows of this matrix
+colnames(matrix_edu_exp)= levels(nongradexp) # could use either nongradexp or gradexp as they have the same levels
+rownames(matrix_edu_exp)= c("Non-Graduates", "Graduates")
+
+matrix_edu_exp
  
+# use prop.table on it to convert numeric values to percentages
+
+# Note to self:
+# Leaving margin blank gives proportions of the whole table
+#
+# prop.table(x, margin=NULL)
+#      [,1] [,2]
+# [1,]  0.1  0.3
+# [2,]  0.2  0.4
+#
+# Giving it 1 gives row proportions
+#
+# prop.table(x, 1)
+#     [,1]      [,2]
+# [1,] 0.2500000 0.7500000
+# [2,] 0.3333333 0.6666667
+#
+# Giving it 2 gives column proportions
+#
+# prop.table(x, 2)
+#     [,1]      [,2]
+# [1,] 0.3333333 0.4285714
+# [2,] 0.6666667 0.5714286
+
+# For this matrix, the groups are rows nongrad and graduate, so need to use margin 1
+
+matrix_edu_exp_perc <- prop.table(matrix_edu_exp, margin =1)
+
+# Set some column names
+plotcolnames <- c("> 1", "1 - 2", "2 - 5", "5 - 10", "10 - 20", "20+")
+
+barplot(matrix_edu_exp_perc,
+        width = 0.5, 
+        space = NULL,
+        names.arg = plotcolnames,
+        col = rainbow(5, start = 0.15), 
+        ylim = c(0,1),
+       # xlim = c(0,5),
+        xlab="Years Testing", 
+        ylab="Frequency %",
+        main="Experience levels of testers by education group"
+      # legend.text = rownames(matrix_edu_exp),
+        )
+legend(2.5,1,
+       legend = rownames(matrix_edu_exp), 
+       title = "Groups",
+       fill = rainbow(5, start = 0.15),
+       bty = "n")
+
+
 
 #tester training - need some kind of snapshot of training courses
 
