@@ -181,7 +181,7 @@ barplot(ind_comp,
 
 
 
-#are testers skills more likely to be valued the longer they have worked in testing
+# Are testers skills more likely to be valued the longer they have worked in testing
 
 # Make indexes
 lessthanone <- which(mydata[,14] == "less than a year")
@@ -261,7 +261,7 @@ legend(6.5,100,
 # different job before becoming a tester - col 16
 # did you study computing - col 18
 # Do you think other testing jobs are better than yours - col 28
-# can take on more responsibility col 41
+# Opportunity to progress col 41
 # My judgement is trusted - col 44
 # unpaid overtime - col 46
 # devs superior - col 47
@@ -353,6 +353,375 @@ legend(6.5,100,
 
 
 # Did testers study computing, grouped by experience level
+
+# Only view data for Testers which achieved a qualification
+# Remove testers which state highest qualification is 'None' from index
+# This is because testers responding 'None' have NA value in column 18
+
+study_data_index <- which(mydata[,17] != "None")
+study_data <- mydata[study_data_index,]
+
+# Indexes for experience groups
+lessthanone <- which(study_data[,14] == "less than a year")
+onetotwo <- which(study_data[,14] == "1 - 2 years")
+twotofive <- which(study_data[,14] == "2 - 5 years")
+fivetoten <- which(study_data[,14] == "5 - 10 years")
+tentotwenty <- which(study_data[,14] == "10 - 20 years")
+twentyplus <- which(study_data[,14] == "More than 20 years")
+
+# Apply these indexes to mydata using column for did you study computing
+lessthanone_comp <- study_data[lessthanone,18]
+onetotwo_comp <- study_data[onetotwo ,18]
+twotofive_comp <- study_data[twotofive,18]
+fivetoten_comp <- study_data[fivetoten ,18]
+tentotwenty_comp <- study_data[tentotwenty,18]
+twentyplus_comp <- study_data[twentyplus,18]
+
+# Check levels
+str(lessthanone_comp)
+str(onetotwo_comp)
+str(twotofive_comp)
+str(fivetoten_comp)
+str(tentotwenty_comp)
+str(twentyplus_comp)
+
+# Drop the unused level "" from each group to reduce to factor w/ 2 levels
+
+lessthanone_comp <- droplevels(lessthanone_comp)
+onetotwo_comp <- droplevels(onetotwo_comp)
+twotofive_comp <- droplevels(twotofive_comp)
+fivetoten_comp <- droplevels(fivetoten_comp)
+tentotwenty_comp <- droplevels(tentotwenty_comp)
+twentyplus_comp <- droplevels(twentyplus_comp)
+
+# Add the No level back to the twentyplus_comp because it was accidently dropped
+levels(twentyplus_comp)[2] <- "No"
+
+#swap the two levels of twentyplus_comp around so they match the other vectors
+twentyplus_comp <- relevel(twentyplus_comp, "No", "Yes")
+
+?relevel
+
+# store this data in tables
+LTO <- table(lessthanone_comp)
+OTT <- table(onetotwo_comp)
+TTF <- table(twotofive_comp)
+FTT <- table(fivetoten_comp)
+TTT <- table(tentotwenty_comp)
+TP <- table(twentyplus_comp)
+
+#up to two years is less than 1 plus one to two
+UTT <- LTO + OTT
+
+
+#make a vector with all these tables combined
+study_comp <- c(UTT, TTF, FTT, TTT, TP)
+
+# Get this data into a matrix
+matrix_comp = matrix(study_comp, ncol=5, byrow= FALSE)
+
+matrix_comp
+
+
+
+#Label the columns and rows of this matrix
+rownames(matrix_comp)= levels(tentotwenty_comp)
+colnames(matrix_comp)= c("> 2", "2 - 5", "5 - 10", "10 - 20", "20+")
+
+# Use prop.table to convert numeric values to percentage values
+matrix_comp_perc <- prop.table(matrix_comp, margin = 2)
+
+# Multiple by 100 so the scale on the plot shows 0 - 100% instead of 0 - 1 %
+matrix_comp_perc <- matrix_comp_perc * 100
+
+
+barplot(matrix_comp_perc,
+        col = rainbow(8, start = 0.05),
+        ylim = c(0,100),
+        xlim = c(0,8),
+        xlab="Years Testing",
+        ylab="Percentage of Group",
+        main="Did you study computing?"
+)
+legend(6.5,100,
+       legend = rownames(matrix_comp_perc), 
+       title = "Response",
+       fill = rainbow(8, start = 0.05),
+       bty = "n")
+
+
+# Do testers think other testing jobs are better than theirs, grouped by exp - col 28
+
+
+
+# Make indexes for experience
+lessthanone <- which(mydata[,14] == "less than a year")
+onetotwo <- which(mydata[,14] == "1 - 2 years")
+twotofive <- which(mydata[,14] == "2 - 5 years")
+fivetoten <- which(mydata[,14] == "5 - 10 years")
+tentotwenty <- which(mydata[,14] == "10 - 20 years")
+twentyplus <- which(mydata[,14] == "More than 20 years")
+
+
+# Apply indexes to mydata using column for if they think the grass is greener 
+lessthanone_grass <- mydata[lessthanone,28]
+onetotwo_grass <- mydata[onetotwo ,28]
+twotofive_grass <- mydata[twotofive,28]
+fivetoten_grass <- mydata[fivetoten ,28]
+tentotwenty_grass <- mydata[tentotwenty,28]
+twentyplus_grass <- mydata[twentyplus,28]
+
+# Check vector to see number of levels
+str(lessthanone_grass)
+str(onetotwo_grass)
+str(twotofive_grass)
+str(fivetoten_grass)
+str(tentotwenty_grass)
+str(twentyplus_grass)
+
+# They all have three levels so need unused levels dropping to reduce to factors w/ 3 levels
+lessthanone_grass <- droplevels(lessthanone_grass)
+onetotwo_grass <- droplevels(onetotwo_grass)
+twotofive_grass <- droplevels(twotofive_grass)
+fivetoten_grass <- droplevels(fivetoten_grass)
+tentotwenty_grass <- droplevels(tentotwenty_grass)
+twentyplus_grass <- droplevels(twentyplus_grass)
+
+#check again - seems two to five still has a blank level
+str(lessthanone_grass)
+str(onetotwo_grass)
+str(twotofive_grass)
+str(fivetoten_grass)
+str(tentotwenty_grass)
+str(twentyplus_grass)
+
+# delete the first blank level by replacing it with the second
+levels(twotofive_grass)[1] <- levels(twotofive_grass)[2]
+
+#check only two levels now
+levels(twotofive_grass)
+str(twotofive_grass)
+
+# store this data in tables
+LTO <- table(lessthanone_grass)
+OTT <- table(onetotwo_grass)
+TTF <- table(twotofive_grass)
+FTT <- table(fivetoten_grass)
+TTT <- table(tentotwenty_grass)
+TP <- table(twentyplus_grass)
+
+#up to two years is less than 1 plus one to two
+UTT <- LTO + OTT
+
+#make a vector with all these tables combined
+grass_factor <- c(UTT, TTF, FTT, TTT, TP)
+
+#convert this vector into a matrix
+
+matrix_grass = matrix(grass_factor, ncol=5, byrow= FALSE)
+
+levels(twentyplus_grass)
+
+#Label the columns and rows of this matrix
+rownames(matrix_grass)= levels(twentyplus_grass) # could use any of the grass vars as they all have same levels
+colnames(matrix_grass)= c("> 2", "2 - 5", "5 - 10", "10 - 20", "20+")
+
+# Use prop.table to convert numeric values to percentage values
+matrix_grass_perc <- prop.table(matrix_grass, margin = 2)
+
+# Multiple by 100 so the scale on the plot shows 0 - 100% instead of 0 - 1 %
+matrix_grass_perc <- matrix_grass_perc * 100
+
+barplot(matrix_grass_perc,
+        col = rainbow(3, start = 0.3),
+        ylim = c(0,100),
+        xlim = c(0,8),
+        xlab="Years Testing",
+        ylab="Percentage of Group",
+        main="Do you think other testing jobs are better than yours?"
+)
+legend(6.5,100,
+       legend = rownames(matrix_grass_perc), 
+       title = "Response",
+       fill = rainbow(3, start = 0.3),
+       bty = "n")
+
+
+
+# Do testers feel there is opportunity to progress? - col 41
+
+# Make indexes for experience
+lessthanone <- which(mydata[,14] == "less than a year")
+onetotwo <- which(mydata[,14] == "1 - 2 years")
+twotofive <- which(mydata[,14] == "2 - 5 years")
+fivetoten <- which(mydata[,14] == "5 - 10 years")
+tentotwenty <- which(mydata[,14] == "10 - 20 years")
+twentyplus <- which(mydata[,14] == "More than 20 years")
+
+
+# Apply indexes to mydata using column for opportunity 
+lessthanone_prog <- mydata[lessthanone,41]
+onetotwo_prog <- mydata[onetotwo ,41]
+twotofive_prog <- mydata[twotofive,41]
+fivetoten_prog <- mydata[fivetoten ,41]
+tentotwenty_prog <- mydata[tentotwenty,41]
+twentyplus_prog <- mydata[twentyplus,41]
+
+#check levels
+str(lessthanone_prog)
+
+#drop unused levels
+lessthanone_prog <- droplevels(lessthanone_prog)
+onetotwo_prog <- droplevels(onetotwo_prog)
+twotofive_prog <- droplevels(twotofive_prog)
+fivetoten_prog <- droplevels(fivetoten_prog)
+tentotwenty_prog <- droplevels(tentotwenty_prog)
+twentyplus_prog <- droplevels(twentyplus_prog)
+
+# check levels again
+str(lessthanone_prog)
+str(onetotwo_prog)
+str(twotofive_prog)
+str(fivetoten_prog)
+str(tentotwenty_prog)
+str(twentyplus_prog)
+
+
+# Add the False level back to the twentyplus_prog because it was accidently dropped
+levels(twentyplus_prog)[2] <- "False"
+
+#swap the two levels of twentyplus_prog around so they match the other vectors
+twentyplus_prog <- relevel(twentyplus_prog, "False", "True")
+
+?relevel
+
+# store this data in tables
+LTO <- table(lessthanone_prog)
+OTT <- table(onetotwo_prog)
+TTF <- table(twotofive_prog)
+FTT <- table(fivetoten_prog)
+TTT <- table(tentotwenty_prog)
+TP <- table(twentyplus_prog)
+
+#up to two years is less than 1 plus one to two
+UTT <- LTO + OTT
+
+
+#make a vector with all these tables combined
+
+prog <- c(UTT, TTF, FTT, TTT, TP)
+
+#convert this vector into a matrix
+
+matrix_prog = matrix(prog, ncol=5, byrow= FALSE)
+
+levels(twentyplus_prog)
+
+#Label the columns and rows of this matrix
+rownames(matrix_prog)= levels(tentotwenty_prog) # could use any of the prog vars as they all have same levels
+colnames(matrix_prog)= c("> 2", "2 - 5", "5 - 10", "10 - 20", "20+")
+
+# Use prop.table to convert numeric values to percentage values
+matrix_prog_perc <- prop.table(matrix_prog, margin = 2)
+
+# Multiple by 100 so the scale on the plot shows 0 - 100% instead of 0 - 1 %
+matrix_prog_perc <- matrix_prog_perc * 100
+
+barplot(matrix_prog_perc,
+        col = rainbow(2, start = 1, end = 0.78),
+        ylim = c(0,100),
+        xlim = c(0,8),
+        xlab="Years Testing",
+        ylab="Percentage of Group",
+        main="I feel there is opportunity to progress"
+)
+legend(6.5,100,
+       legend = rownames(matrix_prog_perc), 
+       title = "Response",
+       fill = rainbow(2, start = 1, end = 0.78),
+       bty = "n")
+
+
+#Do testers believe their judgement is trusted, grouped by experience - col 44
+
+
+# Make indexes
+lessthanone <- which(mydata[,14] == "less than a year")
+onetotwo <- which(mydata[,14] == "1 - 2 years")
+twotofive <- which(mydata[,14] == "2 - 5 years")
+fivetoten <- which(mydata[,14] == "5 - 10 years")
+tentotwenty <- which(mydata[,14] == "10 - 20 years")
+twentyplus <- which(mydata[,14] == "More than 20 years")
+
+
+# Apply indexes to mydata using column for are technical skills valued 
+lessthanone_trust<- mydata[lessthanone,44]
+onetotwo_trust <- mydata[onetotwo ,44]
+twotofive_trust <- mydata[twotofive,44]
+fivetoten_trust <- mydata[fivetoten ,44]
+tentotwenty_trust <- mydata[tentotwenty,44]
+twentyplus_trust <- mydata[twentyplus,44]
+
+#All the vectors we just made have three factors so drop levels to make them have 2 factors
+str(lessthanone_trust)
+
+#so drop levels so that they are just two factors
+lessthanone_trust <- droplevels(lessthanone_trust)
+onetotwo_trust <- droplevels(onetotwo_trust)
+twotofive_trust <- droplevels(twotofive_trust)
+fivetoten_trust <- droplevels(fivetoten_trust)
+tentotwenty_trust <- droplevels(tentotwenty_trust)
+twentyplus_trust <- droplevels(twentyplus_trust)
+
+# store this data in tables
+LTO <- table(lessthanone_trust)
+OTT <- table(onetotwo_trust)
+TTF <- table(twotofive_trust)
+FTT <- table(fivetoten_trust)
+TTT <- table(tentotwenty_trust)
+TP <- table(twentyplus_trust)
+
+#up to two years is less than 1 plus one to two
+UTT <- LTO + OTT
+
+
+#make a vector with all these tables combined
+
+trusted <- c(UTT, TTF, FTT, TTT, TP)
+
+#convert this vector into a matrix
+
+matrix_trust = matrix(trusted, ncol=5, byrow= FALSE)
+
+levels(twentyplus_trust)
+
+#Label the columns and rows of this matrix
+rownames(matrix_trust)= levels(twentyplus_trust) # could use any of the trust vars as they all have same levels
+colnames(matrix_trust)= c("> 2", "2 - 5", "5 - 10", "10 - 20", "20+")
+
+# Use prop.table to convert numeric values to percentage values
+matrix_trust_perc <- prop.table(matrix_trust, margin = 2)
+
+# Multiple by 100 so the scale on the plot shows 0 - 100% instead of 0 - 1 %
+matrix_trust_perc <- matrix_trust_perc * 100
+
+barplot(matrix_trust_perc,
+        col = rainbow(2, start = 0.1, end = 0.6),
+        ylim = c(0,100),
+        xlim = c(0,8),
+        xlab="Years Testing",
+        ylab="Percentage of Group",
+        main="I feel my judgment is trusted, grouped by experience"
+)
+legend(6.5,100,
+       legend = rownames(matrix_valued_perc), 
+       title = "Response",
+       fill = rainbow(2, start = 0.1, end = 0.6),
+       bty = "n")
+
+
+
+
 
 
 
