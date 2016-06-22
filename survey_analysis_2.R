@@ -183,7 +183,7 @@ barplot(ind_comp,
 
 #are testers skills more likely to be valued the longer they have worked in testing
 
-
+# Make indexes
 lessthanone <- which(mydata[,14] == "less than a year")
 onetotwo <- which(mydata[,14] == "1 - 2 years")
 twotofive <- which(mydata[,14] == "2 - 5 years")
@@ -192,6 +192,7 @@ tentotwenty <- which(mydata[,14] == "10 - 20 years")
 twentyplus <- which(mydata[,14] == "More than 20 years")
 
 
+# Apply indexes to mydata using column for are technical skills valued 
 lessthanone_skills <- mydata[lessthanone,37]
 onetotwo_skills <- mydata[onetotwo ,37]
 twotofive_skills <- mydata[twotofive,37]
@@ -210,46 +211,152 @@ fivetoten_skills <- droplevels(fivetoten_skills)
 tentotwenty_skills <- droplevels(tentotwenty_skills)
 twentyplus_skills <- droplevels(twentyplus_skills)
 
-
-
+# store this data in tables
 LTO <- table(lessthanone_skills)
-LTO_perc <- round(c(LTO[1] /(LTO[2]+ LTO[1]),LTO[2] /(LTO[2]+ LTO[1])), digits=2)
-
 OTT <- table(onetotwo_skills)
-OTT_perc <- round(c(OTT[1] /(OTT[2]+ OTT[1]),OTT[2] /(OTT[2]+ OTT[1])), digits=2)
-
 TTF <- table(twotofive_skills)
-TTF_perc <- round(c(TTF[1] /(TTF[2]+ TTF[1]),TTF[2] /(TTF[2]+ TTF[1])), digits=2)
-
 FTT <- table(fivetoten_skills)
-FTT_perc <- round(c(FTT[1] /(FTT[2]+ FTT[1]),FTT[2] /(FTT[2]+ FTT[1])), digits=2)
-
 TTT <- table(tentotwenty_skills)
-TTT_perc <- round(c(TTT[1] /(TTT[2]+ TTT[1]),TTT[2] /(TTT[2]+ TTT[1])), digits=2)
-
 TP <- table(twentyplus_skills)
-TP_perc <- round(c(TP[1] /(TP[2]+ TP[1]),TP[2] /(TP[2]+ TP[1])), digits=2)
-
-LTO_perc
-OTT_perc
-TTF_perc
-FTT_perc
-TTT_perc 
-TP_perc
 
 #up to two years is less than 1 plus one to two
 UTT <- LTO + OTT
-UTT_perc <- c(UTT[1] /(UTT[2]+ UTT[1]),UTT[2] /(UTT[2]+ UTT[1]))
 
 
-#these bar plots look a bit rubbish
-barplot(c(UTT_perc, TTF_perc, FTT_perc, TTT_perc, TP_perc), col= rainbow(30))
+#make a vector with all these tables combined
+
+valued <- c(UTT, TTF, FTT, TTT, TP)
+
+#convert this vector into a matrix
+
+matrix_valued = matrix(valued, ncol=5, byrow= FALSE)
+
+levels(twentyplus_skills)
+
+#Label the columns and rows of this matrix
+rownames(matrix_valued)= levels(twentyplus_skills) # could use any of the skill vars as they all have same levels
+colnames(matrix_valued)= c("> 2", "2 - 5", "5 - 10", "10 - 20", "20+")
+
+# Use prop.table to convert numeric values to percentage values
+matrix_valued_perc <- prop.table(matrix_valued, margin = 2)
+
+# Multiple by 100 so the scale on the plot shows 0 - 100% instead of 0 - 1 %
+matrix_valued_perc <- matrix_valued_perc * 100
+
+barplot(matrix_valued_perc,
+        col = rainbow(2, start = 0.6),
+        ylim = c(0,100),
+        xlim = c(0,8),
+        xlab="Years Testing",
+        ylab="Percentage of Group",
+        main="Technical skills felt valued, grouped by experience"
+        )
+legend(6.5,100,
+       legend = rownames(matrix_valued_perc), 
+       title = "Response",
+       fill = rainbow(2, start = 0.6),
+       bty = "n")
+
+#try apply the stacked % bar plot by group to the following columns:
+# different job before becoming a tester - col 16
+# did you study computing - col 18
+# Do you think other testing jobs are better than yours - col 28
+# can take on more responsibility col 41
+# My judgement is trusted - col 44
+# unpaid overtime - col 46
+# devs superior - col 47
+# Company support to attend training courses - col 49
 
 
-barplot(c(UTT, TTF, FTT, TTT, TP), col= rainbow(30))
 
-#ideally would like a percentage based stacked vertical barplot
-#grouped by duration testing, showing % of true and false reponses
+# Did testers have different job before becoming a tester, grouped by experience
+
+# Indexes for experience groups
+lessthanone <- which(mydata[,14] == "less than a year")
+onetotwo <- which(mydata[,14] == "1 - 2 years")
+twotofive <- which(mydata[,14] == "2 - 5 years")
+fivetoten <- which(mydata[,14] == "5 - 10 years")
+tentotwenty <- which(mydata[,14] == "10 - 20 years")
+twentyplus <- which(mydata[,14] == "More than 20 years")
+
+# Apply these indexes to mydata using column for did you have a different job or was test first job
+lessthanone_job <- mydata[lessthanone,16]
+onetotwo_job <- mydata[onetotwo ,16]
+twotofive_job <- mydata[twotofive,16]
+fivetoten_job <- mydata[fivetoten ,16]
+tentotwenty_job <- mydata[tentotwenty,16]
+twentyplus_job <- mydata[twentyplus,16]
+
+# Checking levels show each of these vectors has factor w /3 levels 
+str(lessthanone_job)
+str(onetotwo_job)
+str(twotofive_job)
+str(fivetoten_job)
+str(tentotwenty_job)
+str(twentyplus_job)
+
+# Drop the unused level "" from each group
+
+lessthanone_job <- droplevels(lessthanone_job)
+onetotwo_job <- droplevels(onetotwo_job)
+twotofive_job <- droplevels(twotofive_job)
+fivetoten_job <- droplevels(fivetoten_job)
+tentotwenty_job <- droplevels(tentotwenty_job)
+twentyplus_job <- droplevels(twentyplus_job)
+
+# store this data in tables
+LTO <- table(lessthanone_job)
+OTT <- table(onetotwo_job)
+TTF <- table(twotofive_job)
+FTT <- table(fivetoten_job)
+TTT <- table(tentotwenty_job)
+TP <- table(twentyplus_job)
+
+#up to two years is less than 1 plus one to two
+UTT <- LTO + OTT
+
+
+#make a vector with all these tables combined
+diff_job_before_tester <- c(UTT, TTF, FTT, TTT, TP)
+
+# Populate a matrix with this data
+
+matrix_jobs = matrix(diff_job_before_tester, ncol=5, byrow= FALSE)
+
+levels(twentyplus_job)
+
+#Label the columns and rows of this matrix
+rownames(matrix_jobs)= c("No", "Yes")
+colnames(matrix_jobs)= c("> 2", "2 - 5", "5 - 10", "10 - 20", "20+")
+
+# Use prop.table to convert numeric values to percentage values
+matrix_jobs_perc <- prop.table(matrix_jobs, margin = 2)
+
+# Multiple by 100 so the scale on the plot shows 0 - 100% instead of 0 - 1 %
+matrix_jobs_perc <- matrix_jobs_perc * 100
+
+
+barplot(matrix_jobs_perc,
+        col = rainbow(3, start = 0.8),
+        ylim = c(0,100),
+        xlim = c(0,8),
+        xlab="Years Testing",
+        ylab="Percentage of Group",
+        main="Did you have a different job before testing?"
+)
+legend(6.5,100,
+       legend = rownames(matrix_jobs_perc), 
+       title = "Response",
+       fill = rainbow(3, start = 0.8),
+       bty = "n")
+
+
+
+# Did testers study computing, grouped by experience level
+
+
+
+
 
 
 #tester qualifications
@@ -316,6 +423,8 @@ pie(has_degree,
 
 
 
+
+
 # Duration of testing career vs level of education 
 
 # Make an index of non-graduates by grepping for None, GCSE, A-Level or foundation course
@@ -360,6 +469,9 @@ levels(gradexp)
 nongradexp <- relevel(nongradexp, "less than a year", "1 - 2 years", "2 - 5 years", "5 - 10 years", "10 - 20 years", "More than 20 years")
 gradexp <- relevel(gradexp, "less than a year", "1 - 2 years", "2 - 5 years", "5 - 10 years", "10 - 20 years", "More than 20 years")
 
+
+factor(nongradexp, levels = levels(nongradexp)[5,1,3,4,2,6])
+?relevel
 
 # Generate tables of experience for non grads and grads
 nongradtab <- table(nongradexp)
@@ -408,7 +520,7 @@ matrix_edu_exp
 matrix_edu_exp_perc <- prop.table(matrix_edu_exp, margin =1)
 
 # Set some column names
-plotcolnames <- c("> 1", "1 - 2", "2 - 5", "5 - 10", "10 - 20", "20+")
+plotcolnames <- c("> 1", "1 - 2", "10 - 20", "2 - 5", "5 - 10", "20+")
 
 barplot(matrix_edu_exp_perc,
         width = 0.5, 
@@ -428,6 +540,8 @@ legend(2.5,1,
        fill = rainbow(5, start = 0.15),
        bty = "n")
 
+
+matrix_edu_exp_perc
 
 
 #tester training - need some kind of snapshot of training courses
