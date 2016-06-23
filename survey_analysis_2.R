@@ -25,7 +25,6 @@ library(treemap)
 # Make an index which ignores people that have never worked in software testing
 testers <- which(mydata[,3] != "No")
 
-
 # Apply this index to only get data for all the testers
 mydata <- mydata[testers,]
 
@@ -67,7 +66,6 @@ only_one_indy_index2 <-  sort(only_one_indy_index2)
 # Check result by filtering the industries - good,  "social media" appears now
 only_one_indy <- unlist(industry[only_one_indy_index2])
 
-
 # Unlist the industries
 industry <- unlist(industry)
 
@@ -77,7 +75,6 @@ write(industry, file = "raw_industry.txt")
 # Clean up done by splitting each industry listed in the "other" field onto a new line
 # Clean up gave multiple industries with similar names the same name with the same case sensitivity
 # E.g. "online gambling" and "gambling" and "betting" were renamed to "Gambling".
-
 
 # Read the cleaned data back in
 clean_industry <- scan(file = "clean_industry.txt", what = character(), sep = "\n")
@@ -105,10 +102,6 @@ combined <- paste0(ind_data[,1], "\n", round(ind_data[,3] * 100, digits = 1), "%
 
 # Add to data frame
 ind_data <- cbind(ind_data, combined)
-
-# Display all the RColourBrewer palettes
-library(RColorBrewer)
-display.brewer.all()
 
 # Treemap
 png(filename = "treeplot.png", width = 600, height = 500, units = "px")
@@ -146,14 +139,11 @@ treemap(ind_data,
 dev.off()
 
 # Find all the testers that have only test in one industry
-
 justone <- only_one_indy_index2
 
 # Invert the just one index to get an index for testers which have tested in multiple industries
-
 all <- c(1:186)
 multi <- all [! all %in% justone]
-
 
 # Apply these indexes to my data
 one_industry <- mydata[justone,]
@@ -164,12 +154,10 @@ total_one <- nrow(mydata[justone,])
 total_multi <- nrow(mydata[multi,])
 
 perc <- c(round(total_one /186 * 100, digits = 1),round(total_multi /186 * 100, digits = 1) )
-
 colnames <- c("Tested in only one Industry", "Tested in multiple industries")
-
 colnames <- paste0(colnames, "\n", perc, "%"  )
-
 ind_comp <- c(total_one, total_multi)
+
 barplot(ind_comp,
         space = NULL,
         col = rainbow(10),
@@ -191,7 +179,6 @@ fivetoten <- which(mydata[,14] == "5 - 10 years")
 tentotwenty <- which(mydata[,14] == "10 - 20 years")
 twentyplus <- which(mydata[,14] == "More than 20 years")
 
-
 # Apply indexes to mydata using column for are technical skills valued 
 lessthanone_skills <- mydata[lessthanone,37]
 onetotwo_skills <- mydata[onetotwo ,37]
@@ -200,10 +187,10 @@ fivetoten_skills <- mydata[fivetoten ,37]
 tentotwenty_skills <- mydata[tentotwenty,37]
 twentyplus_skills <- mydata[twentyplus,37]
 
-#All the vectors we just made have three factors so drop levels to make them have 2 factors
+# All the vectors we just made have three factors so drop levels to make them have 2 factors
 str(lessthanone_skills)
 
-#so drop levels so that they are just two factors
+# So drop levels so that they are just two factors
 lessthanone_skills <- droplevels(lessthanone_skills)
 onetotwo_skills <- droplevels(onetotwo_skills)
 twotofive_skills <- droplevels(twotofive_skills)
@@ -211,7 +198,7 @@ fivetoten_skills <- droplevels(fivetoten_skills)
 tentotwenty_skills <- droplevels(tentotwenty_skills)
 twentyplus_skills <- droplevels(twentyplus_skills)
 
-# store this data in tables
+# Store this data in tables
 LTO <- table(lessthanone_skills)
 OTT <- table(onetotwo_skills)
 TTF <- table(twotofive_skills)
@@ -219,23 +206,18 @@ FTT <- table(fivetoten_skills)
 TTT <- table(tentotwenty_skills)
 TP <- table(twentyplus_skills)
 
-#up to two years is less than 1 plus one to two
+# Up to two years is less than 1 plus one to two
 UTT <- LTO + OTT
 
-
-#make a vector with all these tables combined
-
+# Make a vector with all these tables combined
 valued <- c(UTT, TTF, FTT, TTT, TP)
 
-#convert this vector into a matrix
-
-matrix_valued = matrix(valued, ncol=5, byrow= FALSE)
-
-levels(twentyplus_skills)
+# Convert this vector into a matrix
+matrix_valued <- matrix(valued, ncol=5, byrow= FALSE)
 
 #Label the columns and rows of this matrix
-rownames(matrix_valued)= levels(twentyplus_skills) # could use any of the skill vars as they all have same levels
-colnames(matrix_valued)= c("> 2", "2 - 5", "5 - 10", "10 - 20", "20+")
+rownames(matrix_valued) <- levels(twentyplus_skills) # could use any of the skill vars as they all have same levels
+colnames(matrix_valued) <- c("> 2", "2 - 5", "5 - 10", "10 - 20", "20+")
 
 # Use prop.table to convert numeric values to percentage values
 matrix_valued_perc <- prop.table(matrix_valued, margin = 2)
@@ -315,19 +297,15 @@ TP <- table(twentyplus_job)
 #up to two years is less than 1 plus one to two
 UTT <- LTO + OTT
 
-
 #make a vector with all these tables combined
 diff_job_before_tester <- c(UTT, TTF, FTT, TTT, TP)
 
 # Populate a matrix with this data
-
-matrix_jobs = matrix(diff_job_before_tester, ncol=5, byrow= FALSE)
-
-levels(twentyplus_job)
+matrix_jobs <- matrix(diff_job_before_tester, ncol=5, byrow= FALSE)
 
 #Label the columns and rows of this matrix
-rownames(matrix_jobs)= c("No", "Yes")
-colnames(matrix_jobs)= c("> 2", "2 - 5", "5 - 10", "10 - 20", "20+")
+rownames(matrix_jobs) <- c("No", "Yes")
+colnames(matrix_jobs) <- c("> 2", "2 - 5", "5 - 10", "10 - 20", "20+")
 
 # Use prop.table to convert numeric values to percentage values
 matrix_jobs_perc <- prop.table(matrix_jobs, margin = 2)
@@ -349,8 +327,6 @@ legend(6.5,100,
        title = "Response",
        fill = rainbow(3, start = 0.8),
        bty = "n")
-
-
 
 # Did testers study computing, grouped by experience level
 
@@ -400,8 +376,6 @@ levels(twentyplus_comp)[2] <- "No"
 #swap the two levels of twentyplus_comp around so they match the other vectors
 twentyplus_comp <- relevel(twentyplus_comp, "No", "Yes")
 
-?relevel
-
 # store this data in tables
 LTO <- table(lessthanone_comp)
 OTT <- table(onetotwo_comp)
@@ -413,20 +387,15 @@ TP <- table(twentyplus_comp)
 #up to two years is less than 1 plus one to two
 UTT <- LTO + OTT
 
-
 #make a vector with all these tables combined
 study_comp <- c(UTT, TTF, FTT, TTT, TP)
 
 # Get this data into a matrix
-matrix_comp = matrix(study_comp, ncol=5, byrow= FALSE)
-
-matrix_comp
-
-
+matrix_comp <- matrix(study_comp, ncol=5, byrow= FALSE)
 
 #Label the columns and rows of this matrix
-rownames(matrix_comp)= levels(tentotwenty_comp)
-colnames(matrix_comp)= c("> 2", "2 - 5", "5 - 10", "10 - 20", "20+")
+rownames(matrix_comp) <- levels(tentotwenty_comp)
+colnames(matrix_comp) <- c("> 2", "2 - 5", "5 - 10", "10 - 20", "20+")
 
 # Use prop.table to convert numeric values to percentage values
 matrix_comp_perc <- prop.table(matrix_comp, margin = 2)
@@ -451,7 +420,6 @@ legend(6.5,100,
 
 
 # Do testers think other testing jobs are better than theirs, grouped by exp - col 28
-
 
 
 # Make indexes for experience
@@ -517,14 +485,11 @@ UTT <- LTO + OTT
 grass_factor <- c(UTT, TTF, FTT, TTT, TP)
 
 #convert this vector into a matrix
-
-matrix_grass = matrix(grass_factor, ncol=5, byrow= FALSE)
-
-levels(twentyplus_grass)
+matrix_grass <- matrix(grass_factor, ncol=5, byrow= FALSE)
 
 #Label the columns and rows of this matrix
-rownames(matrix_grass)= levels(twentyplus_grass) # could use any of the grass vars as they all have same levels
-colnames(matrix_grass)= c("> 2", "2 - 5", "5 - 10", "10 - 20", "20+")
+rownames(matrix_grass) <- levels(twentyplus_grass) # could use any of the grass vars as they all have same levels
+colnames(matrix_grass) <- c("> 2", "2 - 5", "5 - 10", "10 - 20", "20+")
 
 # Use prop.table to convert numeric values to percentage values
 matrix_grass_perc <- prop.table(matrix_grass, margin = 2)
@@ -593,8 +558,6 @@ levels(twentyplus_prog)[2] <- "False"
 #swap the two levels of twentyplus_prog around so they match the other vectors
 twentyplus_prog <- relevel(twentyplus_prog, "False", "True")
 
-?relevel
-
 # store this data in tables
 LTO <- table(lessthanone_prog)
 OTT <- table(onetotwo_prog)
@@ -606,20 +569,15 @@ TP <- table(twentyplus_prog)
 #up to two years is less than 1 plus one to two
 UTT <- LTO + OTT
 
-
 #make a vector with all these tables combined
-
 prog <- c(UTT, TTF, FTT, TTT, TP)
 
 #convert this vector into a matrix
-
-matrix_prog = matrix(prog, ncol=5, byrow= FALSE)
-
-levels(twentyplus_prog)
+matrix_prog <- matrix(prog, ncol=5, byrow= FALSE)
 
 #Label the columns and rows of this matrix
-rownames(matrix_prog)= levels(tentotwenty_prog) # could use any of the prog vars as they all have same levels
-colnames(matrix_prog)= c("> 2", "2 - 5", "5 - 10", "10 - 20", "20+")
+rownames(matrix_prog) <- levels(tentotwenty_prog) # could use any of the prog vars as they all have same levels
+colnames(matrix_prog) <- c("> 2", "2 - 5", "5 - 10", "10 - 20", "20+")
 
 # Use prop.table to convert numeric values to percentage values
 matrix_prog_perc <- prop.table(matrix_prog, margin = 2)
@@ -642,8 +600,7 @@ legend(6.5,100,
        bty = "n")
 
 
-#Do testers believe their judgement is trusted, grouped by experience - col 44
-
+# Do testers believe their judgement is trusted, grouped by experience
 
 # Make indexes
 lessthanone <- which(mydata[,14] == "less than a year")
@@ -652,7 +609,6 @@ twotofive <- which(mydata[,14] == "2 - 5 years")
 fivetoten <- which(mydata[,14] == "5 - 10 years")
 tentotwenty <- which(mydata[,14] == "10 - 20 years")
 twentyplus <- which(mydata[,14] == "More than 20 years")
-
 
 # Apply indexes to mydata using column for are technical skills valued 
 lessthanone_trust<- mydata[lessthanone,44]
@@ -665,7 +621,7 @@ twentyplus_trust <- mydata[twentyplus,44]
 #All the vectors we just made have three factors so drop levels to make them have 2 factors
 str(lessthanone_trust)
 
-#so drop levels so that they are just two factors
+# Drop levels unused levels so that they are just two factors
 lessthanone_trust <- droplevels(lessthanone_trust)
 onetotwo_trust <- droplevels(onetotwo_trust)
 twotofive_trust <- droplevels(twotofive_trust)
@@ -684,20 +640,15 @@ TP <- table(twentyplus_trust)
 #up to two years is less than 1 plus one to two
 UTT <- LTO + OTT
 
-
 #make a vector with all these tables combined
-
 trusted <- c(UTT, TTF, FTT, TTT, TP)
 
 #convert this vector into a matrix
-
-matrix_trust = matrix(trusted, ncol=5, byrow= FALSE)
-
-levels(twentyplus_trust)
+matrix_trust <- matrix(trusted, ncol=5, byrow= FALSE)
 
 #Label the columns and rows of this matrix
-rownames(matrix_trust)= levels(twentyplus_trust) # could use any of the trust vars as they all have same levels
-colnames(matrix_trust)= c("> 2", "2 - 5", "5 - 10", "10 - 20", "20+")
+rownames(matrix_trust) <- levels(twentyplus_trust) # could use any of the trust vars as they all have same levels
+colnames(matrix_trust) <- c("> 2", "2 - 5", "5 - 10", "10 - 20", "20+")
 
 # Use prop.table to convert numeric values to percentage values
 matrix_trust_perc <- prop.table(matrix_trust, margin = 2)
@@ -719,16 +670,93 @@ legend(6.5,100,
        fill = rainbow(2, start = 0.1, end = 0.6),
        bty = "n")
 
-
-
-
-
-
-
-
-
-
 #tester qualifications
+
+# Make Indexes 
+lessthanone <- which(mydata[,14] == "less than a year")
+onetotwo <- which(mydata[,14] == "1 - 2 years")
+twotofive <- which(mydata[,14] == "2 - 5 years")
+fivetoten <- which(mydata[,14] == "5 - 10 years")
+tentotwenty <- which(mydata[,14] == "10 - 20 years")
+twentyplus <- which(mydata[,14] == "More than 20 years")
+
+
+# Make indexes to mydata using split by experience group, grepping to get indexes for nongrads in each group
+
+LTOnongrad <- grep("None|GCSE|A-Level|Foundation", mydata[lessthanone,17])
+OTTnongrad <- grep("None|GCSE|A-Level|Foundation", mydata[onetotwo,17])
+TTFnongrad <- grep("None|GCSE|A-Level|Foundation", mydata[twotofive,17])
+FTTnongrad <- grep("None|GCSE|A-Level|Foundation", mydata[fivetoten,17])
+TTTnongrad <- grep("None|GCSE|A-Level|Foundation", mydata[tentotwenty,17])
+TPnongrad <- grep("None|GCSE|A-Level|Foundation", mydata[twentyplus,17])
+
+# Make indexes to mydata using split by experience group, grepping to get indexes for grads in each group
+
+LTOgrad <- grep("Bachelors degree|Masters degree|Doctorate", mydata[lessthanone,17])
+OTTgrad <- grep("Bachelors degree|Masters degree|Doctorate", mydata[onetotwo,17])
+TTFgrad <- grep("Bachelors degree|Masters degree|Doctorate", mydata[twotofive,17])
+FTTgrad <- grep("Bachelors degree|Masters degree|Doctorate", mydata[fivetoten,17])
+TTTgrad <- grep("Bachelors degree|Masters degree|Doctorate", mydata[tentotwenty,17])
+TPgrad <- grep("Bachelors degree|Masters degree|Doctorate", mydata[twentyplus,17])
+
+
+# Total the numbers of non-grad and grad and store them in a vector for each group
+
+LTO <- c(length(LTOnongrad), length(LTOgrad))
+OTT <- c(length(OTTnongrad), length(OTTgrad))
+TTF <- c(length(TTFnongrad), length(TTFgrad))
+FTT <- c(length(FTTnongrad), length(FTTgrad))
+TTT <- c(length(TTTnongrad), length(TTTgrad))
+TP <- c(length(TPnongrad), length(TPgrad))
+
+#up to two years is less than 1 plus one to two
+UTT <- LTO + OTT
+
+# Combine each of these vectors together
+edu_exp <- c(UTT, TTF, FTT, TTT, TP)
+
+# Convert to matrix
+matrix_edu_exp <- matrix(edu_exp, ncol = 2, byrow = FALSE)
+
+
+#name rows and columns
+colnames(matrix_edu_exp) <- c("non-grad", "grad")
+rownames(matrix_edu_exp) <- c("> 2", "2 - 5", "5 - 10", "10 - 20", "20+")
+
+matrix_edu_exp 
+
+# Looks like this matrix is the wrong way around the columns need to be rows and rows need to be columns 
+# So transpose it with t() 
+matrix_edu_exp <- t(matrix_edu_exp)
+
+
+# Use prop.table to convert numeric values to percentage values
+matrix_edu_exp_perc <- prop.table(matrix_edu_exp, margin = 2)
+
+# Multiple by 100 so the scale on the plot shows 0 - 100% instead of 0 - 1 %
+matrix_edu_exp_perc <- matrix_edu_exp_perc * 100
+
+
+barplot(matrix_edu_exp_perc,
+        col = rainbow(2, start = 0.78, end = 0.5),
+        ylim = c(0,1),
+        xlim = c(0,8),
+        xlab="Years Testing",
+        ylab="Percentage of Group",
+        main="Percentage of Graduates and Non-Graduates by experience group"
+)
+legend(6.5,1,
+       legend = rownames(matrix_edu_exp), 
+       title = "Response",
+       fill = rainbow(2, start = 0.78, end = 0.5),
+       bty = "n")
+
+
+
+
+
+
+# old edu plot starts here
 
 None <-which(mydata[,17] == "None")
 GCSE <- which(mydata[,17] == "GCSEs or equivalent")
@@ -840,7 +868,6 @@ gradexp <- relevel(gradexp, "less than a year", "1 - 2 years", "2 - 5 years", "5
 
 
 factor(nongradexp, levels = levels(nongradexp)[5,1,3,4,2,6])
-?relevel
 
 # Generate tables of experience for non grads and grads
 nongradtab <- table(nongradexp)
