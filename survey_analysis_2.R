@@ -716,11 +716,11 @@ UTT <- LTO + OTT
 edu_exp <- c(UTT, TTF, FTT, TTT, TP)
 
 # Convert to matrix
-matrix_edu_exp <- matrix(edu_exp, ncol = 2, byrow = FALSE)
+matrix_edu_exp <- matrix(edu_exp, ncol = 2, byrow = TRUE)
 
 
 #name rows and columns
-colnames(matrix_edu_exp) <- c("non-grad", "grad")
+colnames(matrix_edu_exp) <- c("Non-grad", "Grad")
 rownames(matrix_edu_exp) <- c("> 2", "2 - 5", "5 - 10", "10 - 20", "20+")
 
 matrix_edu_exp 
@@ -739,18 +739,33 @@ matrix_edu_exp_perc <- matrix_edu_exp_perc * 100
 
 barplot(matrix_edu_exp_perc,
         col = rainbow(2, start = 0.78, end = 0.5),
-        ylim = c(0,1),
+        ylim = c(0,100),
         xlim = c(0,8),
         xlab="Years Testing",
         ylab="Percentage of Group",
-        main="Percentage of Graduates and Non-Graduates by experience group"
+        main="Graduates and Non-Graduates grouped by Experience"
 )
-legend(6.5,1,
+legend(6.5,100,
        legend = rownames(matrix_edu_exp), 
        title = "Response",
        fill = rainbow(2, start = 0.78, end = 0.5),
        bty = "n")
 
+
+
+barplot(matrix_edu_exp,
+        col = rainbow(2, start = 0.78, end = 0.5),
+        ylim = c(0,100),
+        xlim = c(0,8),
+        xlab="Years Testing",
+        ylab="Percentage of Group",
+        main="Graduates and Non-Graduates grouped by Experience"
+)
+legend(6.5,100,
+       legend = rownames(matrix_edu_exp), 
+       title = "Response",
+       fill = rainbow(2, start = 0.78, end = 0.5),
+       bty = "n")
 
 
 
