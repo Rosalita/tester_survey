@@ -419,6 +419,21 @@ legend(6.5,100,
        bty = "n")
 
 
+barplot(matrix_comp,
+        col = rainbow(8, start = 0.05),
+        ylim = c(0,100),
+        xlim = c(0,8),
+        xlab="Years Testing",
+        ylab="Percentage of Group",
+        main="Did you study computing?"
+)
+legend(6.5,100,
+       legend = rownames(matrix_comp_perc), 
+       title = "Response",
+       fill = rainbow(8, start = 0.05),
+       bty = "n")
+
+
 # Do testers think other testing jobs are better than theirs, grouped by exp - col 28
 
 
@@ -820,7 +835,7 @@ degree <- (B_sum + M_sum + P_sum)
 
 # Make a vector containing total numbers with and without degree
 has_degree <- c(no_degree, degree) 
-# Generate labels for pie chart containing % of Happy and Not Happy
+# Generate labels for pie chart containing % of degree and no degree
 pielabels <- c("Without Degree", "With Degree")
 percent <- round(has_degree/sum(has_degree)* 100, digits = 1)
 pielabels <- paste(pielabels, percent)    
@@ -833,9 +848,52 @@ pie(has_degree,
     col = rainbow(7, start =0.35),
     main = "Are testers graduates?")
 
+#  To Do: Did you know you wanted to work in testing while in education? - col 19
 
 
-#tester training - need some kind of snapshot of training courses
+# Tester training - need some kind of snapshot of training courses
 
 
+# Make an index of testers which say they have attended each training course
+
+train20 <- which(mydata[,20] != "0")
+train21 <- which(mydata[,21] != "0")
+train22 <- which(mydata[,22] != "0")
+train23 <- which(mydata[,23] != "0")
+train24 <- which(mydata[,24] != "0")
+train25 <- which(mydata[,25] != "0")
+train26 <- which(mydata[,26] != "0")
+
+# Group all the row numbers of testers which have been on a training course into a single vector
+
+beenontraining <- c(notrain20, notrain21, notrain22, notrain23, notrain24, notrain25, notrain26)
+
+
+# Make a vector to represent rows 1 - 186
+all <- c(1:186) 
+
+# Testers which have not done any training are all the rows which are not in beenontraining
+notraining <- all [! all %in% beenontraining]
+
+
+#test the notraining index to make sure all the training columns 20:26 contain 0
+mydata[notraining, 20:26]
+
+total_no_training <- length(notraining)
+total_tester <- length(mydata[,20])
+
+# Make a vector containing total numbers with and without training
+train_vs_not <- c(total_no_training, total_tester - total_no_training)
+ 
+# Generate labels for pie chart containing % with and without training
+pielabels <- c("Without training", "With training")
+percent <- round(train_vs_not/sum(train_vs_not)* 100, digits = 1)
+pielabels <- paste(pielabels, percent)    
+pielabels <- paste(pielabels, "%", sep="")
+
+# Plot a pie chart 
+pie(train_vs_not, 
+    labels = pielabels, 
+    col = rainbow(5, start =0.7, end = 1),
+    main = "Are testers attending training courses?")
 
