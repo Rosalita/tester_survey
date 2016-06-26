@@ -3,8 +3,8 @@
 # testingfuntime.blogspot.co.uk
 
 # Set working dir
-setwd ("/Dev/Git/tester_survey")
-#setwd("~/git/tester_survey")
+#setwd ("/Dev/Git/tester_survey")
+setwd("~/git/tester_survey")
 
 # Read in data
 mydata <- read.csv("survey_results_raw.csv",
@@ -278,7 +278,6 @@ str(tentotwenty_job)
 str(twentyplus_job)
 
 # Drop the unused level "" from each group
-
 lessthanone_job <- droplevels(lessthanone_job)
 onetotwo_job <- droplevels(onetotwo_job)
 twotofive_job <- droplevels(twotofive_job)
@@ -362,7 +361,6 @@ str(tentotwenty_comp)
 str(twentyplus_comp)
 
 # Drop the unused level "" from each group to reduce to factor w/ 2 levels
-
 lessthanone_comp <- droplevels(lessthanone_comp)
 onetotwo_comp <- droplevels(onetotwo_comp)
 twotofive_comp <- droplevels(twotofive_comp)
@@ -424,7 +422,7 @@ barplot(matrix_comp,
         ylim = c(0,100),
         xlim = c(0,8),
         xlab="Years Testing",
-        ylab="Percentage of Group",
+        ylab="Number of Testers",
         main="Did you study computing?"
 )
 legend(6.5,100,
@@ -773,7 +771,7 @@ barplot(matrix_edu_exp,
         ylim = c(0,100),
         xlim = c(0,8),
         xlab="Years Testing",
-        ylab="Percentage of Group",
+        ylab="Number of testers",
         main="Graduates and Non-Graduates grouped by Experience"
 )
 legend(6.5,100,
@@ -809,7 +807,7 @@ P_sum <- length(PHD)
 
 total <- N_sum+G_sum+A_sum+F_sum+B_sum+M_sum+P_sum
 
-plotcolnames <- c("None", "GCSE", "A-Level", "Foun.", "B.D", "M.D", "PHD") 
+plotcolnames <- c("None", "GCSE", "A-Level", "Foun.", "Batc.", "Masters", "PhD") 
 
 
 #I would really like to add % labels to the top of each column
@@ -825,13 +823,17 @@ barplot(c(N_sum, G_sum, A_sum, F_sum, B_sum, M_sum, P_sum),
 )
 axis(2,at=seq(0,90,10))
 
+
 phd_perc <- round((P_sum / total)*100, digits =2)
+phd_perc
+
 bd_perc <-  round((B_sum / total)*100, digits =2)
-
-
+bd_perc
 
 no_degree <- (N_sum + G_sum + A_sum + F_sum)
+no_degree
 degree <- (B_sum + M_sum + P_sum)
+degree
 
 # Make a vector containing total numbers with and without degree
 has_degree <- c(no_degree, degree) 
