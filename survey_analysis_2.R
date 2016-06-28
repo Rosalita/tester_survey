@@ -3,8 +3,8 @@
 # testingfuntime.blogspot.co.uk
 
 # Set working dir
-#setwd ("/Dev/Git/tester_survey")
-setwd("~/git/tester_survey")
+setwd ("/Dev/Git/tester_survey")
+#setwd("~/git/tester_survey")
 
 # Read in data
 mydata <- read.csv("survey_results_raw.csv",
@@ -323,6 +323,21 @@ barplot(matrix_jobs_perc,
 )
 legend(6.5,100,
        legend = rownames(matrix_jobs_perc), 
+       title = "Response",
+       fill = rainbow(3, start = 0.8),
+       bty = "n")
+
+
+barplot(matrix_jobs,
+        col = rainbow(3, start = 0.8),
+        ylim = c(0,100),
+        xlim = c(0,8),
+        xlab="Years Testing",
+        ylab="Percentage of Group",
+        main="Did you have a different job before testing?"
+)
+legend(6.5,100,
+       legend = rownames(matrix_jobs), 
        title = "Response",
        fill = rainbow(3, start = 0.8),
        bty = "n")
@@ -782,9 +797,7 @@ legend(6.5,100,
 
 
 
-
-
-# old edu plot starts here
+# Plot education levels grouped by experience
 
 None <-which(mydata[,17] == "None")
 GCSE <- which(mydata[,17] == "GCSEs or equivalent")
@@ -807,10 +820,8 @@ P_sum <- length(PHD)
 
 total <- N_sum+G_sum+A_sum+F_sum+B_sum+M_sum+P_sum
 
-plotcolnames <- c("None", "GCSE", "A-Level", "Foun.", "Batc.", "Masters", "PhD") 
+plotcolnames <- c("None", "GCSE", "A-Level", "Foun.", "Bach.", "Masters", "PhD") 
 
-
-#I would really like to add % labels to the top of each column
 
 barplot(c(N_sum, G_sum, A_sum, F_sum, B_sum, M_sum, P_sum), 
         space = NULL, 
@@ -844,19 +855,17 @@ pielabels <- paste(pielabels, percent)
 pielabels <- paste(pielabels, "%", sep="")
 
 
-# Plot a pie chart 
+# Plot a pie chart of graduate and non-graduate
 pie(has_degree, 
     labels = pielabels, 
-    col = rainbow(7, start =0.35),
+    col = rainbow(3, start =0.3, end =0.6),
+    radius = 1.5,
     main = "Are testers graduates?")
-
-#  To Do: Did you know you wanted to work in testing while in education? - col 19
-
 
 # Tester training - need some kind of snapshot of training courses
 
 
-# Make an index of testers which say they have attended each training course
+# Make an indexes of testers which say they have attended each training course
 
 train20 <- which(mydata[,20] != "0")
 train21 <- which(mydata[,21] != "0")
@@ -868,7 +877,7 @@ train26 <- which(mydata[,26] != "0")
 
 # Group all the row numbers of testers which have been on a training course into a single vector
 
-beenontraining <- c(notrain20, notrain21, notrain22, notrain23, notrain24, notrain25, notrain26)
+beenontraining <- c(train20, train21, train22, train23, train24, train25, train26)
 
 
 # Make a vector to represent rows 1 - 186
@@ -888,7 +897,7 @@ total_tester <- length(mydata[,20])
 train_vs_not <- c(total_no_training, total_tester - total_no_training)
  
 # Generate labels for pie chart containing % with and without training
-pielabels <- c("Without training", "With training")
+pielabels <- c("No training", "Attended training")
 percent <- round(train_vs_not/sum(train_vs_not)* 100, digits = 1)
 pielabels <- paste(pielabels, percent)    
 pielabels <- paste(pielabels, "%", sep="")
@@ -896,6 +905,164 @@ pielabels <- paste(pielabels, "%", sep="")
 # Plot a pie chart 
 pie(train_vs_not, 
     labels = pielabels, 
-    col = rainbow(5, start =0.7, end = 1),
+    col = rainbow(3, start =0.75, end = 1),
+    radius = 1.5,
     main = "Are testers attending training courses?")
+
+# Are training courses a replacement for formal education?
+# Make a stacked bar plot of education grouped by training and no training
+
+#index of testers with no training
+notraining
+
+# make an index of testers with training which is all the rows that are not in no training
+all <- c(1:186) 
+training <- all [! all %in% notraining]
+
+# apply the training and no training index to the column containing education level
+notraining_edu  <- mydata[notraining,17]
+training_edu <- mydata[training,17]
+
+#check structure
+str(notraining_edu)
+str(training_edu)
+
+# Drop the unused level
+notraining_edu <- droplevels(notraining_edu)
+training_edu <- droplevels(training_edu)
+
+
+#Levels keep being sorted alphabetically which is no good for plots
+levels(notraining_edu)  # shows the levels are "A-Levels or equivalent", "Bachelors degree", "Doctorate", "Foundation course", "GCSEs or equivalent", "Masters degree", "None"  
+
+# To reorder the levels use factor() and specify a new order
+notraining_edu <- factor(notraining_edu,levels(notraining_edu)[c(7,5,1,4,2,6,3)])
+training_edu <- factor(training_edu, levels(training_edu)[c(7,5,1,4,2,6,3)])
+
+#check levels now in right order
+str(notraining_edu)
+str(training_edu)
+
+# store this data in tables
+NTRAIN <- table(notraining_edu)
+TRAIN <- table(training_edu)
+
+
+
+
+#make a vector with all these tables combined
+train_edu <- c(NTRAIN,TRAIN)
+
+#convert this vector into a matrix
+matrix_train_edu <- matrix(train_edu, ncol=7, byrow= TRUE)
+
+
+#name rows and columns
+rownames(matrix_train_edu) <- c("No Training", "Training")
+colnames(matrix_train_edu) <- c("None", "GCSE", "A-Level", "Foun.", "Bach.", "Masters", "PhD")
+
+# Use prop.table to convert numeric values to percentage values
+matrix_train_edu_perc <- prop.table(matrix_train_edu, margin = 2)
+
+
+# Multiple by 100 so the scale on the plot shows 0 - 100% instead of 0 - 1 %
+matrix_train_edu_perc <- matrix_train_edu_perc * 100
+
+barplot(matrix_train_edu,
+        col = rainbow(2, start = 0.1, end = 0.6),
+        ylim = c(0,100),
+        xlim = c(0,8),
+        xlab="Education Level",
+        ylab="Number of Testers",
+        main="Training by education level"
+)
+legend(6.4,100,
+       legend = rownames(matrix_train_edu), 
+       title = "Response",
+       fill = rainbow(2, start = 0.1, end = 0.6),
+       bty = "n")
+
+
+matrix_train_edu
+
+#split education into grad and non grad for train and no train groups
+
+nograd_notrain <- sum(NTRAIN[1:4])
+grad_notrain <- sum(NTRAIN[5:7])
+nograd_train <- sum(TRAIN[1:4])
+grad_train <- sum(TRAIN[5:7])
+
+# Add to vector
+
+trainbygrad <- c(nograd_notrain, grad_notrain, nograd_train, grad_train)
+
+# Make Matrix
+
+matrix_trainbygrad <- matrix(trainbygrad, ncol=2, byrow= TRUE)
+rownames(matrix_trainbygrad) <- c("No Training", "Training")
+colnames(matrix_trainbygrad) <- c("Non Graduate", "Graduate") 
+
+matrix_trainbygrad
+
+# Use prop.table to convert numeric values to percentage values
+matrix_trainbygrad_perc <- prop.table(matrix_trainbygrad, margin = 2)
+
+
+# Multiple by 100 so the scale on the plot shows 0 - 100% instead of 0 - 1 %
+matrix_trainbygrad_perc <- matrix_trainbygrad_perc * 100
+
+
+barplot(matrix_trainbygrad,
+        col = rainbow(2, start = 0.1, end = 0.6),
+        ylim = c(0,100),
+        xlim = c(0,8),
+        xlab="Education Level",
+        ylab="Percentage of group",
+        main="Training by education level"
+)
+legend(6.5,100,
+       legend = rownames(matrix_trainbygrad), 
+       title = "Response",
+       fill = rainbow(2, start = 0.1, end = 0.6),
+       bty = "n")
+
+# Get data for each training course.
+RST <- mydata[,20]
+AST_F <- mydata[,21]
+AST_B <- mydata[,22]
+AST_T <- mydata[,23]
+ISEB_F <- mydata[,24]
+ISEB_A <- mydata[,25]
+ISEB_E <- mydata[,26]
+
+# sum up the points
+sumRST <- sum(RST)
+sumAST_F <- sum(AST_F)
+sumAST_B <- sum(AST_B)
+sumAST_T <- sum(AST_T)
+sumISEB_F <- sum(ISEB_F)
+sumISEB_A <- sum(ISEB_A)
+sumISEB_E <- sum(ISEB_E)
+
+# Make a vector of training courses
+training <- c(sumRST, sumISEB_F, sumAST_F, sumAST_B, sumISEB_A, sumAST_T, sumISEB_E)
+
+#Add names to the vector
+names(training) <- c("RST", "ISEB Foun.", "AST Foun.", "AST Bug.", "ISEB Adv.", "AST Test.", "ISEB Exp.")
+
+# Change axis orientation
+par(las = 2)
+# Margins, bottom, left, top, right (default is  c(5.1, 4.1, 4.1, 2.1))
+par(mar=c(6,4.1,4.1,2.1))
+
+barplot(training,
+        col = rainbow(7, start = 0.1, end = 0.6),
+        ylim = c(0,250),
+        xlim = c(0,8),
+        ylab="Popularity rating",
+        main="Training Course Popularity")
+
+
+
+#  To Do: Did you know you wanted to work in testing while in education? - col 19
 
