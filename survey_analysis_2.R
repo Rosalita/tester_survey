@@ -841,6 +841,9 @@ phd_perc
 bd_perc <-  round((B_sum / total)*100, digits =2)
 bd_perc
 
+none_perc <- round((N_sum / total)*100, digits =2)
+none_perc
+
 no_degree <- (N_sum + G_sum + A_sum + F_sum)
 no_degree
 degree <- (B_sum + M_sum + P_sum)
@@ -1065,4 +1068,174 @@ barplot(training,
 
 
 #  To Do: Did you know you wanted to work in testing while in education? - col 19
+
+# Make an index which excludes people that answered None to highest qualification 
+# because these people were not asked if they knew they wanted to be a tester while studying 
+educated <- which(mydata[,17] != "None")
+
+#apply educated index to my data
+edudf <- mydata[educated,]
+
+# Make indexes for yes and no responses to did you know you wanted to be a tester question
+yes <- which(edudf[,19] == "Yes")
+no <- which(edudf[,19] == "No")
+
+wanttotest <- c(length(yes), length(no))
+
+
+# Generate labels for pie chart containing % with and without training
+pielabels <- c("Yes", "No")
+percent <- round(wanttotest/sum(wanttotest)* 100, digits = 1)
+pielabels <- paste(pielabels, percent)    
+pielabels <- paste(pielabels, "%", sep="")
+
+pie(wanttotest, 
+    labels = pielabels, 
+    col = rainbow(3, start =0.52, end= 0.4),
+    radius = 1.5,
+    main = "While studying did you know you wanted to work in testing?")
+
+# See if there is a trend for testing over the years of experience
+
+
+# Make indexes for experience
+lessthanone <- which(edudf[,14] == "less than a year")
+onetotwo <- which(edudf[,14] == "1 - 2 years")
+twotofive <- which(edudf[,14] == "2 - 5 years")
+fivetoten <- which(edudf[,14] == "5 - 10 years")
+tentotwenty <- which(edudf[,14] == "10 - 20 years")
+twentyplus <- which(edudf[,14] == "More than 20 years")
+
+
+# Apply indexes to edudf using column for if wanted to be a tester while in education 
+lessthanone_t <- edudf[lessthanone,19]
+onetotwo_t <- edudf[onetotwo ,19]
+twotofive_t <- edudf[twotofive,19]
+fivetoten_t <- edudf[fivetoten ,19]
+tentotwenty_t <- edudf[tentotwenty,19]
+twentyplus_t <- edudf[twentyplus,19]
+
+# Drop levels to remove unused vectors
+lessthanone_t <- droplevels(lessthanone_t)
+onetotwo_t <- droplevels(onetotwo_t)
+twotofive_t <- droplevels(twotofive_t)
+fivetoten_t <- droplevels(fivetoten_t)
+tentotwenty_t <- droplevels(tentotwenty_t)
+twentyplus_t <- droplevels(twentyplus_t)
+
+# Check vector to see number of levels
+str(lessthanone_t)
+str(onetotwo_t)
+str(twotofive_t)
+str(fivetoten_t)
+str(tentotwenty_t)
+str(twentyplus_t)
+
+# Some valid levels got accidently dropped as they were zero value, so add them back in
+levels(lessthanone_t)[2] <- "Yes"
+levels(onetotwo_t)[2] <- "Yes"
+levels(twentyplus_t)[2] <- "Yes"
+
+
+# store this data in tables
+LTO <- table(lessthanone_t)
+OTT <- table(onetotwo_t)
+TTF <- table(twotofive_t)
+FTT <- table(fivetoten_t)
+TTT <- table(tentotwenty_t)
+TP <- table(twentyplus_t)
+
+#up to two years is less than 1 plus one to two
+UTT <- LTO + OTT
+
+#make a vector with all these tables combined
+test <- c(UTT, TTF, FTT, TTT, TP)
+
+#convert this vector into a matrix
+matrix_t <- matrix(test, ncol=5, byrow= FALSE)
+
+#Label the columns and rows of this matrix
+rownames(matrix_t) <- levels(lessthanone_t)
+colnames(matrix_t) <- c("> 2", "2 - 5", "5 - 10", "10 - 20", "20+")
+
+#plot
+barplot(matrix_t,
+        col = rainbow(3, start= 0.7, end = 1),
+        ylim = c(0,100),
+        xlim = c(0,8),
+        xlab="Years Testing",
+        ylab="Number of Testers",
+        main="While studying did you know you wanted to work in testing?"
+)
+legend(6.5,100,
+       legend = rownames(matrix_t), 
+       title = "Response",
+       fill = rainbow(3, start= 0.7, end = 1),
+       bty = "n")
+
+# What made you apply for first testing job - column 12
+
+reasons <- mydata[,12]
+
+str(reasons)
+
+# Convert reasons to character which will allow each response to be split up
+chareasons <- as.character(reasons)
+
+# Split all the reason data on ; to get a list of industries
+split_reasons <- strsplit(chareasons, split=";")
+
+# Reasons are grouped in a list and need unlisting
+all_reasons <- unlist(split_reasons)
+
+str(all_reasons)
+
+reason_table <- table(all_reasons)
+
+sorted_reasons <- sort(reason_table, decreasing = TRUE)
+
+#Manually shorten names of some reasons so they fit on the plot
+reasonames <- names(sorted_reasons)  
+reasonames[2] <- "Wanted to work with tech and computers" 
+reasonames[3] <- "Thought testing would be fun" 
+reasonames[4] <- "Unemployed and needed a job"
+reasonames[5] <- "Wanted a new challenge"
+reasonames[6] <- "Thought testing had good career prospects"
+reasonames[7] <- "Thought better than previous job"
+reasonames[8] <- "Did not like previous job"
+reasonames[9] <- "Wanted a way to use computing knowledge"
+reasonames[10] <- "Knew how to code but did not want to be a dev"
+reasonames[11] <- "Wanted to work in software but couldn't code"
+reasonames[12] <- "Other testers recommended testing"
+reasonames[13] <- "Changed role within company"
+reasonames[14] <- "Testing paid better than previous job"
+reasonames[15] <- "Recommended by someone that was not a tester"
+reasonames[16] <- "To gain entry to a specific company"
+reasonames[17] <- "Job advert stated no experience necessary"
+reasonames[18] <- "Thought testing would be easy"
+reasonames[19] <- "Saw lots of testing jobs advertised"
+reasonames[20] <- "Decided to apply after careers/jobs fair"
+reasonames[21] <- "Applied so could relocate"
+
+names(sorted_reasons) <- reasonames
+
+
+
+#set pars
+# Change axis orientation
+par(las = 2)
+# Margins, bottom, left, top, right (default is  c(5.1, 4.1, 4.1, 2.1))
+par(mar=c(19,4.1,1,2.1))
+
+#Plot
+
+barplot(sorted_reasons,
+        ylim = c(0,100),
+        xlim = c(0,25),
+        ylab="Responses",
+        col = heat.colors(21)
+)
+
+
+
 
