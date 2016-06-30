@@ -15,11 +15,11 @@ mydata <- read.csv("survey_results_raw.csv",
 library(treemap)
 
 
-###################################################
+#####################################################
 
-# Section 2 - Tester Experience?
+# Section 2 - A Snapshot of Software Testers in 2016
 
-###################################################
+#####################################################
 
 
 # Make an index which ignores people that have never worked in software testing
@@ -45,7 +45,7 @@ indy_counter <- function(x) {
   count <- length(industry[[x]])
   return(count)
 }
-# sapply function to industry to get index
+# sapply() function to industry to get index
 counts <- sapply(1:length(industry), indy_counter)
 
 # Which testers have only worked in one industry
@@ -97,7 +97,7 @@ ind_data <- cbind(ind_df, relfreq)
 # Sort the data frame by relative frequency, largest first
 ind_data <- ind_data[order(ind_data$relfreq, decreasing = TRUE) ,]
 
-# Make new col
+# Make new column
 combined <- paste0(ind_data[,1], "\n", round(ind_data[,3] * 100, digits = 1), "%"  )
 
 # Add to data frame
@@ -167,90 +167,6 @@ barplot(ind_comp,
         ylab="Number of testers"
         )
 
-
-
-# Are testers skills more likely to be valued the longer they have worked in testing
-
-# Make indexes
-lessthanone <- which(mydata[,14] == "less than a year")
-onetotwo <- which(mydata[,14] == "1 - 2 years")
-twotofive <- which(mydata[,14] == "2 - 5 years")
-fivetoten <- which(mydata[,14] == "5 - 10 years")
-tentotwenty <- which(mydata[,14] == "10 - 20 years")
-twentyplus <- which(mydata[,14] == "More than 20 years")
-
-# Apply indexes to mydata using column for are technical skills valued 
-lessthanone_skills <- mydata[lessthanone,37]
-onetotwo_skills <- mydata[onetotwo ,37]
-twotofive_skills <- mydata[twotofive,37]
-fivetoten_skills <- mydata[fivetoten ,37]
-tentotwenty_skills <- mydata[tentotwenty,37]
-twentyplus_skills <- mydata[twentyplus,37]
-
-# All the vectors we just made have three factors so drop levels to make them have 2 factors
-str(lessthanone_skills)
-
-# So drop levels so that they are just two factors
-lessthanone_skills <- droplevels(lessthanone_skills)
-onetotwo_skills <- droplevels(onetotwo_skills)
-twotofive_skills <- droplevels(twotofive_skills)
-fivetoten_skills <- droplevels(fivetoten_skills)
-tentotwenty_skills <- droplevels(tentotwenty_skills)
-twentyplus_skills <- droplevels(twentyplus_skills)
-
-# Store this data in tables
-LTO <- table(lessthanone_skills)
-OTT <- table(onetotwo_skills)
-TTF <- table(twotofive_skills)
-FTT <- table(fivetoten_skills)
-TTT <- table(tentotwenty_skills)
-TP <- table(twentyplus_skills)
-
-# Up to two years is less than 1 plus one to two
-UTT <- LTO + OTT
-
-# Make a vector with all these tables combined
-valued <- c(UTT, TTF, FTT, TTT, TP)
-
-# Convert this vector into a matrix
-matrix_valued <- matrix(valued, ncol=5, byrow= FALSE)
-
-#Label the columns and rows of this matrix
-rownames(matrix_valued) <- levels(twentyplus_skills) # could use any of the skill vars as they all have same levels
-colnames(matrix_valued) <- c("> 2", "2 - 5", "5 - 10", "10 - 20", "20+")
-
-# Use prop.table to convert numeric values to percentage values
-matrix_valued_perc <- prop.table(matrix_valued, margin = 2)
-
-# Multiple by 100 so the scale on the plot shows 0 - 100% instead of 0 - 1 %
-matrix_valued_perc <- matrix_valued_perc * 100
-
-barplot(matrix_valued_perc,
-        col = rainbow(2, start = 0.6),
-        ylim = c(0,100),
-        xlim = c(0,8),
-        xlab="Years Testing",
-        ylab="Percentage of Group",
-        main="Technical skills felt valued, grouped by experience"
-        )
-legend(6.5,100,
-       legend = rownames(matrix_valued_perc), 
-       title = "Response",
-       fill = rainbow(2, start = 0.6),
-       bty = "n")
-
-#try apply the stacked % bar plot by group to the following columns:
-# different job before becoming a tester - col 16
-# did you study computing - col 18
-# Do you think other testing jobs are better than yours - col 28
-# Opportunity to progress col 41
-# My judgement is trusted - col 44
-# unpaid overtime - col 46
-# devs superior - col 47
-# Company support to attend training courses - col 49
-
-
-
 # Did testers have different job before becoming a tester, grouped by experience
 
 # Indexes for experience groups
@@ -285,7 +201,7 @@ fivetoten_job <- droplevels(fivetoten_job)
 tentotwenty_job <- droplevels(tentotwenty_job)
 twentyplus_job <- droplevels(twentyplus_job)
 
-# store this data in tables
+# Store this data in tables
 LTO <- table(lessthanone_job)
 OTT <- table(onetotwo_job)
 TTF <- table(twotofive_job)
@@ -293,16 +209,16 @@ FTT <- table(fivetoten_job)
 TTT <- table(tentotwenty_job)
 TP <- table(twentyplus_job)
 
-#up to two years is less than 1 plus one to two
+# Up to two years is less than 1 plus one to two
 UTT <- LTO + OTT
 
-#make a vector with all these tables combined
+# Make a vector with all these tables combined
 diff_job_before_tester <- c(UTT, TTF, FTT, TTT, TP)
 
 # Populate a matrix with this data
 matrix_jobs <- matrix(diff_job_before_tester, ncol=5, byrow= FALSE)
 
-#Label the columns and rows of this matrix
+# Label the columns and rows of this matrix
 rownames(matrix_jobs) <- c("No", "Yes")
 colnames(matrix_jobs) <- c("> 2", "2 - 5", "5 - 10", "10 - 20", "20+")
 
@@ -327,20 +243,6 @@ legend(6.5,100,
        fill = rainbow(3, start = 0.8),
        bty = "n")
 
-
-barplot(matrix_jobs,
-        col = rainbow(3, start = 0.8),
-        ylim = c(0,100),
-        xlim = c(0,8),
-        xlab="Years Testing",
-        ylab="Percentage of Group",
-        main="Did you have a different job before testing?"
-)
-legend(6.5,100,
-       legend = rownames(matrix_jobs), 
-       title = "Response",
-       fill = rainbow(3, start = 0.8),
-       bty = "n")
 
 # Did testers study computing, grouped by experience level
 
@@ -386,10 +288,10 @@ twentyplus_comp <- droplevels(twentyplus_comp)
 # Add the No level back to the twentyplus_comp because it was accidently dropped
 levels(twentyplus_comp)[2] <- "No"
 
-#swap the two levels of twentyplus_comp around so they match the other vectors
+# Swap the two levels of twentyplus_comp around so they match the other vectors
 twentyplus_comp <- relevel(twentyplus_comp, "No", "Yes")
 
-# store this data in tables
+# Store this data in tables
 LTO <- table(lessthanone_comp)
 OTT <- table(onetotwo_comp)
 TTF <- table(twotofive_comp)
@@ -397,16 +299,16 @@ FTT <- table(fivetoten_comp)
 TTT <- table(tentotwenty_comp)
 TP <- table(twentyplus_comp)
 
-#up to two years is less than 1 plus one to two
+# Up to two years is less than 1 plus one to two
 UTT <- LTO + OTT
 
-#make a vector with all these tables combined
+# Make a vector with all these tables combined
 study_comp <- c(UTT, TTF, FTT, TTT, TP)
 
 # Get this data into a matrix
 matrix_comp <- matrix(study_comp, ncol=5, byrow= FALSE)
 
-#Label the columns and rows of this matrix
+# Label the columns and rows of this matrix
 rownames(matrix_comp) <- levels(tentotwenty_comp)
 colnames(matrix_comp) <- c("> 2", "2 - 5", "5 - 10", "10 - 20", "20+")
 
@@ -431,274 +333,7 @@ legend(6.5,100,
        fill = rainbow(8, start = 0.05),
        bty = "n")
 
-
-barplot(matrix_comp,
-        col = rainbow(8, start = 0.05),
-        ylim = c(0,100),
-        xlim = c(0,8),
-        xlab="Years Testing",
-        ylab="Number of Testers",
-        main="Did you study computing?"
-)
-legend(6.5,100,
-       legend = rownames(matrix_comp_perc), 
-       title = "Response",
-       fill = rainbow(8, start = 0.05),
-       bty = "n")
-
-
-# Do testers think other testing jobs are better than theirs, grouped by exp - col 28
-
-
-# Make indexes for experience
-lessthanone <- which(mydata[,14] == "less than a year")
-onetotwo <- which(mydata[,14] == "1 - 2 years")
-twotofive <- which(mydata[,14] == "2 - 5 years")
-fivetoten <- which(mydata[,14] == "5 - 10 years")
-tentotwenty <- which(mydata[,14] == "10 - 20 years")
-twentyplus <- which(mydata[,14] == "More than 20 years")
-
-
-# Apply indexes to mydata using column for if they think the grass is greener 
-lessthanone_grass <- mydata[lessthanone,28]
-onetotwo_grass <- mydata[onetotwo ,28]
-twotofive_grass <- mydata[twotofive,28]
-fivetoten_grass <- mydata[fivetoten ,28]
-tentotwenty_grass <- mydata[tentotwenty,28]
-twentyplus_grass <- mydata[twentyplus,28]
-
-# Check vector to see number of levels
-str(lessthanone_grass)
-str(onetotwo_grass)
-str(twotofive_grass)
-str(fivetoten_grass)
-str(tentotwenty_grass)
-str(twentyplus_grass)
-
-# They all have three levels so need unused levels dropping to reduce to factors w/ 3 levels
-lessthanone_grass <- droplevels(lessthanone_grass)
-onetotwo_grass <- droplevels(onetotwo_grass)
-twotofive_grass <- droplevels(twotofive_grass)
-fivetoten_grass <- droplevels(fivetoten_grass)
-tentotwenty_grass <- droplevels(tentotwenty_grass)
-twentyplus_grass <- droplevels(twentyplus_grass)
-
-#check again - seems two to five still has a blank level
-str(lessthanone_grass)
-str(onetotwo_grass)
-str(twotofive_grass)
-str(fivetoten_grass)
-str(tentotwenty_grass)
-str(twentyplus_grass)
-
-# delete the first blank level by replacing it with the second
-levels(twotofive_grass)[1] <- levels(twotofive_grass)[2]
-
-#check only two levels now
-levels(twotofive_grass)
-str(twotofive_grass)
-
-# store this data in tables
-LTO <- table(lessthanone_grass)
-OTT <- table(onetotwo_grass)
-TTF <- table(twotofive_grass)
-FTT <- table(fivetoten_grass)
-TTT <- table(tentotwenty_grass)
-TP <- table(twentyplus_grass)
-
-#up to two years is less than 1 plus one to two
-UTT <- LTO + OTT
-
-#make a vector with all these tables combined
-grass_factor <- c(UTT, TTF, FTT, TTT, TP)
-
-#convert this vector into a matrix
-matrix_grass <- matrix(grass_factor, ncol=5, byrow= FALSE)
-
-#Label the columns and rows of this matrix
-rownames(matrix_grass) <- levels(twentyplus_grass) # could use any of the grass vars as they all have same levels
-colnames(matrix_grass) <- c("> 2", "2 - 5", "5 - 10", "10 - 20", "20+")
-
-# Use prop.table to convert numeric values to percentage values
-matrix_grass_perc <- prop.table(matrix_grass, margin = 2)
-
-# Multiple by 100 so the scale on the plot shows 0 - 100% instead of 0 - 1 %
-matrix_grass_perc <- matrix_grass_perc * 100
-
-barplot(matrix_grass_perc,
-        col = rainbow(3, start = 0.3),
-        ylim = c(0,100),
-        xlim = c(0,8),
-        xlab="Years Testing",
-        ylab="Percentage of Group",
-        main="Do you think other testing jobs are better than yours?"
-)
-legend(6.5,100,
-       legend = rownames(matrix_grass_perc), 
-       title = "Response",
-       fill = rainbow(3, start = 0.3),
-       bty = "n")
-
-
-
-# Do testers feel there is opportunity to progress? - col 41
-
-# Make indexes for experience
-lessthanone <- which(mydata[,14] == "less than a year")
-onetotwo <- which(mydata[,14] == "1 - 2 years")
-twotofive <- which(mydata[,14] == "2 - 5 years")
-fivetoten <- which(mydata[,14] == "5 - 10 years")
-tentotwenty <- which(mydata[,14] == "10 - 20 years")
-twentyplus <- which(mydata[,14] == "More than 20 years")
-
-
-# Apply indexes to mydata using column for opportunity 
-lessthanone_prog <- mydata[lessthanone,41]
-onetotwo_prog <- mydata[onetotwo ,41]
-twotofive_prog <- mydata[twotofive,41]
-fivetoten_prog <- mydata[fivetoten ,41]
-tentotwenty_prog <- mydata[tentotwenty,41]
-twentyplus_prog <- mydata[twentyplus,41]
-
-#check levels
-str(lessthanone_prog)
-
-#drop unused levels
-lessthanone_prog <- droplevels(lessthanone_prog)
-onetotwo_prog <- droplevels(onetotwo_prog)
-twotofive_prog <- droplevels(twotofive_prog)
-fivetoten_prog <- droplevels(fivetoten_prog)
-tentotwenty_prog <- droplevels(tentotwenty_prog)
-twentyplus_prog <- droplevels(twentyplus_prog)
-
-# check levels again
-str(lessthanone_prog)
-str(onetotwo_prog)
-str(twotofive_prog)
-str(fivetoten_prog)
-str(tentotwenty_prog)
-str(twentyplus_prog)
-
-
-# Add the False level back to the twentyplus_prog because it was accidently dropped
-levels(twentyplus_prog)[2] <- "False"
-
-#swap the two levels of twentyplus_prog around so they match the other vectors
-twentyplus_prog <- relevel(twentyplus_prog, "False", "True")
-
-# store this data in tables
-LTO <- table(lessthanone_prog)
-OTT <- table(onetotwo_prog)
-TTF <- table(twotofive_prog)
-FTT <- table(fivetoten_prog)
-TTT <- table(tentotwenty_prog)
-TP <- table(twentyplus_prog)
-
-#up to two years is less than 1 plus one to two
-UTT <- LTO + OTT
-
-#make a vector with all these tables combined
-prog <- c(UTT, TTF, FTT, TTT, TP)
-
-#convert this vector into a matrix
-matrix_prog <- matrix(prog, ncol=5, byrow= FALSE)
-
-#Label the columns and rows of this matrix
-rownames(matrix_prog) <- levels(tentotwenty_prog) # could use any of the prog vars as they all have same levels
-colnames(matrix_prog) <- c("> 2", "2 - 5", "5 - 10", "10 - 20", "20+")
-
-# Use prop.table to convert numeric values to percentage values
-matrix_prog_perc <- prop.table(matrix_prog, margin = 2)
-
-# Multiple by 100 so the scale on the plot shows 0 - 100% instead of 0 - 1 %
-matrix_prog_perc <- matrix_prog_perc * 100
-
-barplot(matrix_prog_perc,
-        col = rainbow(2, start = 1, end = 0.78),
-        ylim = c(0,100),
-        xlim = c(0,8),
-        xlab="Years Testing",
-        ylab="Percentage of Group",
-        main="I feel there is opportunity to progress"
-)
-legend(6.5,100,
-       legend = rownames(matrix_prog_perc), 
-       title = "Response",
-       fill = rainbow(2, start = 1, end = 0.78),
-       bty = "n")
-
-
-# Do testers believe their judgement is trusted, grouped by experience
-
-# Make indexes
-lessthanone <- which(mydata[,14] == "less than a year")
-onetotwo <- which(mydata[,14] == "1 - 2 years")
-twotofive <- which(mydata[,14] == "2 - 5 years")
-fivetoten <- which(mydata[,14] == "5 - 10 years")
-tentotwenty <- which(mydata[,14] == "10 - 20 years")
-twentyplus <- which(mydata[,14] == "More than 20 years")
-
-# Apply indexes to mydata using column for are technical skills valued 
-lessthanone_trust<- mydata[lessthanone,44]
-onetotwo_trust <- mydata[onetotwo ,44]
-twotofive_trust <- mydata[twotofive,44]
-fivetoten_trust <- mydata[fivetoten ,44]
-tentotwenty_trust <- mydata[tentotwenty,44]
-twentyplus_trust <- mydata[twentyplus,44]
-
-#All the vectors we just made have three factors so drop levels to make them have 2 factors
-str(lessthanone_trust)
-
-# Drop levels unused levels so that they are just two factors
-lessthanone_trust <- droplevels(lessthanone_trust)
-onetotwo_trust <- droplevels(onetotwo_trust)
-twotofive_trust <- droplevels(twotofive_trust)
-fivetoten_trust <- droplevels(fivetoten_trust)
-tentotwenty_trust <- droplevels(tentotwenty_trust)
-twentyplus_trust <- droplevels(twentyplus_trust)
-
-# store this data in tables
-LTO <- table(lessthanone_trust)
-OTT <- table(onetotwo_trust)
-TTF <- table(twotofive_trust)
-FTT <- table(fivetoten_trust)
-TTT <- table(tentotwenty_trust)
-TP <- table(twentyplus_trust)
-
-#up to two years is less than 1 plus one to two
-UTT <- LTO + OTT
-
-#make a vector with all these tables combined
-trusted <- c(UTT, TTF, FTT, TTT, TP)
-
-#convert this vector into a matrix
-matrix_trust <- matrix(trusted, ncol=5, byrow= FALSE)
-
-#Label the columns and rows of this matrix
-rownames(matrix_trust) <- levels(twentyplus_trust) # could use any of the trust vars as they all have same levels
-colnames(matrix_trust) <- c("> 2", "2 - 5", "5 - 10", "10 - 20", "20+")
-
-# Use prop.table to convert numeric values to percentage values
-matrix_trust_perc <- prop.table(matrix_trust, margin = 2)
-
-# Multiple by 100 so the scale on the plot shows 0 - 100% instead of 0 - 1 %
-matrix_trust_perc <- matrix_trust_perc * 100
-
-barplot(matrix_trust_perc,
-        col = rainbow(2, start = 0.1, end = 0.6),
-        ylim = c(0,100),
-        xlim = c(0,8),
-        xlab="Years Testing",
-        ylab="Percentage of Group",
-        main="I feel my judgment is trusted, grouped by experience"
-)
-legend(6.5,100,
-       legend = rownames(matrix_valued_perc), 
-       title = "Response",
-       fill = rainbow(2, start = 0.1, end = 0.6),
-       bty = "n")
-
-#tester qualifications
+# Software Tester qualifications
 
 # Make Indexes 
 lessthanone <- which(mydata[,14] == "less than a year")
@@ -708,9 +343,7 @@ fivetoten <- which(mydata[,14] == "5 - 10 years")
 tentotwenty <- which(mydata[,14] == "10 - 20 years")
 twentyplus <- which(mydata[,14] == "More than 20 years")
 
-
 # Make indexes to mydata using split by experience group, grepping to get indexes for nongrads in each group
-
 LTOnongrad <- grep("None|GCSE|A-Level|Foundation", mydata[lessthanone,17])
 OTTnongrad <- grep("None|GCSE|A-Level|Foundation", mydata[onetotwo,17])
 TTFnongrad <- grep("None|GCSE|A-Level|Foundation", mydata[twotofive,17])
@@ -719,7 +352,6 @@ TTTnongrad <- grep("None|GCSE|A-Level|Foundation", mydata[tentotwenty,17])
 TPnongrad <- grep("None|GCSE|A-Level|Foundation", mydata[twentyplus,17])
 
 # Make indexes to mydata using split by experience group, grepping to get indexes for grads in each group
-
 LTOgrad <- grep("Bachelors degree|Masters degree|Doctorate", mydata[lessthanone,17])
 OTTgrad <- grep("Bachelors degree|Masters degree|Doctorate", mydata[onetotwo,17])
 TTFgrad <- grep("Bachelors degree|Masters degree|Doctorate", mydata[twotofive,17])
@@ -727,9 +359,7 @@ FTTgrad <- grep("Bachelors degree|Masters degree|Doctorate", mydata[fivetoten,17
 TTTgrad <- grep("Bachelors degree|Masters degree|Doctorate", mydata[tentotwenty,17])
 TPgrad <- grep("Bachelors degree|Masters degree|Doctorate", mydata[twentyplus,17])
 
-
 # Total the numbers of non-grad and grad and store them in a vector for each group
-
 LTO <- c(length(LTOnongrad), length(LTOgrad))
 OTT <- c(length(OTTnongrad), length(OTTgrad))
 TTF <- c(length(TTFnongrad), length(TTFgrad))
@@ -737,7 +367,7 @@ FTT <- c(length(FTTnongrad), length(FTTgrad))
 TTT <- c(length(TTTnongrad), length(TTTgrad))
 TP <- c(length(TPnongrad), length(TPgrad))
 
-#up to two years is less than 1 plus one to two
+# Up to two years is less than 1 plus one to two
 UTT <- LTO + OTT
 
 # Combine each of these vectors together
@@ -747,7 +377,7 @@ edu_exp <- c(UTT, TTF, FTT, TTT, TP)
 matrix_edu_exp <- matrix(edu_exp, ncol = 2, byrow = TRUE)
 
 
-#name rows and columns
+# Name rows and columns
 colnames(matrix_edu_exp) <- c("Non-grad", "Grad")
 rownames(matrix_edu_exp) <- c("> 2", "2 - 5", "5 - 10", "10 - 20", "20+")
 
@@ -756,30 +386,6 @@ matrix_edu_exp
 # Looks like this matrix is the wrong way around the columns need to be rows and rows need to be columns 
 # So transpose it with t() 
 matrix_edu_exp <- t(matrix_edu_exp)
-
-
-# Use prop.table to convert numeric values to percentage values
-matrix_edu_exp_perc <- prop.table(matrix_edu_exp, margin = 2)
-
-# Multiple by 100 so the scale on the plot shows 0 - 100% instead of 0 - 1 %
-matrix_edu_exp_perc <- matrix_edu_exp_perc * 100
-
-
-barplot(matrix_edu_exp_perc,
-        col = rainbow(2, start = 0.78, end = 0.5),
-        ylim = c(0,100),
-        xlim = c(0,8),
-        xlab="Years Testing",
-        ylab="Percentage of Group",
-        main="Graduates and Non-Graduates grouped by Experience"
-)
-legend(6.5,100,
-       legend = rownames(matrix_edu_exp), 
-       title = "Response",
-       fill = rainbow(2, start = 0.78, end = 0.5),
-       bty = "n")
-
-
 
 barplot(matrix_edu_exp,
         col = rainbow(2, start = 0.78, end = 0.5),
@@ -795,10 +401,7 @@ legend(6.5,100,
        fill = rainbow(2, start = 0.78, end = 0.5),
        bty = "n")
 
-
-
 # Plot education levels grouped by experience
-
 None <-which(mydata[,17] == "None")
 GCSE <- which(mydata[,17] == "GCSEs or equivalent")
 AL <- which(mydata[,17] == "A-Levels or equivalent")
@@ -808,7 +411,6 @@ MD <- which(mydata[,17] == "Masters degree")
 PHD <- which(mydata[,17] == "Doctorate")
 
 edu <- table(mydata[,17])
-
 
 N_sum <- length(None)
 G_sum <- length(GCSE)
@@ -822,7 +424,6 @@ total <- N_sum+G_sum+A_sum+F_sum+B_sum+M_sum+P_sum
 
 plotcolnames <- c("None", "GCSE", "A-Level", "Foun.", "Bach.", "Masters", "PhD") 
 
-
 barplot(c(N_sum, G_sum, A_sum, F_sum, B_sum, M_sum, P_sum), 
         space = NULL, 
         names.arg = plotcolnames,
@@ -833,7 +434,6 @@ barplot(c(N_sum, G_sum, A_sum, F_sum, B_sum, M_sum, P_sum),
         main="Education levels"
 )
 axis(2,at=seq(0,90,10))
-
 
 phd_perc <- round((P_sum / total)*100, digits =2)
 phd_perc
@@ -851,12 +451,12 @@ degree
 
 # Make a vector containing total numbers with and without degree
 has_degree <- c(no_degree, degree) 
+
 # Generate labels for pie chart containing % of degree and no degree
 pielabels <- c("Without Degree", "With Degree")
 percent <- round(has_degree/sum(has_degree)* 100, digits = 1)
 pielabels <- paste(pielabels, percent)    
 pielabels <- paste(pielabels, "%", sep="")
-
 
 # Plot a pie chart of graduate and non-graduate
 pie(has_degree, 
@@ -866,7 +466,6 @@ pie(has_degree,
     main = "Are testers graduates?")
 
 # Tester training - need some kind of snapshot of training courses
-
 
 # Make an indexes of testers which say they have attended each training course
 
@@ -879,16 +478,13 @@ train25 <- which(mydata[,25] != "0")
 train26 <- which(mydata[,26] != "0")
 
 # Group all the row numbers of testers which have been on a training course into a single vector
-
 beenontraining <- c(train20, train21, train22, train23, train24, train25, train26)
-
 
 # Make a vector to represent rows 1 - 186
 all <- c(1:186) 
 
 # Testers which have not done any training are all the rows which are not in beenontraining
 notraining <- all [! all %in% beenontraining]
-
 
 #test the notraining index to make sure all the training columns 20:26 contain 0
 mydata[notraining, 20:26]
@@ -934,7 +530,6 @@ str(training_edu)
 notraining_edu <- droplevels(notraining_edu)
 training_edu <- droplevels(training_edu)
 
-
 #Levels keep being sorted alphabetically which is no good for plots
 levels(notraining_edu)  # shows the levels are "A-Levels or equivalent", "Bachelors degree", "Doctorate", "Foundation course", "GCSEs or equivalent", "Masters degree", "None"  
 
@@ -950,15 +545,11 @@ str(training_edu)
 NTRAIN <- table(notraining_edu)
 TRAIN <- table(training_edu)
 
-
-
-
 #make a vector with all these tables combined
 train_edu <- c(NTRAIN,TRAIN)
 
 #convert this vector into a matrix
 matrix_train_edu <- matrix(train_edu, ncol=7, byrow= TRUE)
-
 
 #name rows and columns
 rownames(matrix_train_edu) <- c("No Training", "Training")
@@ -966,7 +557,6 @@ colnames(matrix_train_edu) <- c("None", "GCSE", "A-Level", "Foun.", "Bach.", "Ma
 
 # Use prop.table to convert numeric values to percentage values
 matrix_train_edu_perc <- prop.table(matrix_train_edu, margin = 2)
-
 
 # Multiple by 100 so the scale on the plot shows 0 - 100% instead of 0 - 1 %
 matrix_train_edu_perc <- matrix_train_edu_perc * 100
@@ -985,49 +575,7 @@ legend(6.4,100,
        fill = rainbow(2, start = 0.1, end = 0.6),
        bty = "n")
 
-
 matrix_train_edu
-
-#split education into grad and non grad for train and no train groups
-
-nograd_notrain <- sum(NTRAIN[1:4])
-grad_notrain <- sum(NTRAIN[5:7])
-nograd_train <- sum(TRAIN[1:4])
-grad_train <- sum(TRAIN[5:7])
-
-# Add to vector
-
-trainbygrad <- c(nograd_notrain, grad_notrain, nograd_train, grad_train)
-
-# Make Matrix
-
-matrix_trainbygrad <- matrix(trainbygrad, ncol=2, byrow= TRUE)
-rownames(matrix_trainbygrad) <- c("No Training", "Training")
-colnames(matrix_trainbygrad) <- c("Non Graduate", "Graduate") 
-
-matrix_trainbygrad
-
-# Use prop.table to convert numeric values to percentage values
-matrix_trainbygrad_perc <- prop.table(matrix_trainbygrad, margin = 2)
-
-
-# Multiple by 100 so the scale on the plot shows 0 - 100% instead of 0 - 1 %
-matrix_trainbygrad_perc <- matrix_trainbygrad_perc * 100
-
-
-barplot(matrix_trainbygrad,
-        col = rainbow(2, start = 0.1, end = 0.6),
-        ylim = c(0,100),
-        xlim = c(0,8),
-        xlab="Education Level",
-        ylab="Percentage of group",
-        main="Training by education level"
-)
-legend(6.5,100,
-       legend = rownames(matrix_trainbygrad), 
-       title = "Response",
-       fill = rainbow(2, start = 0.1, end = 0.6),
-       bty = "n")
 
 # Get data for each training course.
 RST <- mydata[,20]
@@ -1038,7 +586,7 @@ ISEB_F <- mydata[,24]
 ISEB_A <- mydata[,25]
 ISEB_E <- mydata[,26]
 
-# sum up the points
+# Sum up the points
 sumRST <- sum(RST)
 sumAST_F <- sum(AST_F)
 sumAST_B <- sum(AST_B)
@@ -1055,6 +603,7 @@ names(training) <- c("RST", "ISEB Foun.", "AST Foun.", "AST Bug.", "ISEB Adv.", 
 
 # Change axis orientation
 par(las = 2)
+
 # Margins, bottom, left, top, right (default is  c(5.1, 4.1, 4.1, 2.1))
 par(mar=c(6,4.1,4.1,2.1))
 
@@ -1065,15 +614,11 @@ barplot(training,
         ylab="Popularity rating",
         main="Training Course Popularity")
 
-
-
-#  To Do: Did you know you wanted to work in testing while in education? - col 19
-
 # Make an index which excludes people that answered None to highest qualification 
-# because these people were not asked if they knew they wanted to be a tester while studying 
+# Because these people were not asked if they knew they wanted to be a tester while studying 
 educated <- which(mydata[,17] != "None")
 
-#apply educated index to my data
+# Apply educated index to my data
 edudf <- mydata[educated,]
 
 # Make indexes for yes and no responses to did you know you wanted to be a tester question
@@ -1097,7 +642,6 @@ pie(wanttotest,
 
 # See if there is a trend for testing over the years of experience
 
-
 # Make indexes for experience
 lessthanone <- which(edudf[,14] == "less than a year")
 onetotwo <- which(edudf[,14] == "1 - 2 years")
@@ -1105,7 +649,6 @@ twotofive <- which(edudf[,14] == "2 - 5 years")
 fivetoten <- which(edudf[,14] == "5 - 10 years")
 tentotwenty <- which(edudf[,14] == "10 - 20 years")
 twentyplus <- which(edudf[,14] == "More than 20 years")
-
 
 # Apply indexes to edudf using column for if wanted to be a tester while in education 
 lessthanone_t <- edudf[lessthanone,19]
@@ -1135,7 +678,6 @@ str(twentyplus_t)
 levels(lessthanone_t)[2] <- "Yes"
 levels(onetotwo_t)[2] <- "Yes"
 levels(twentyplus_t)[2] <- "Yes"
-
 
 # store this data in tables
 LTO <- table(lessthanone_t)
@@ -1173,8 +715,7 @@ legend(6.5,100,
        fill = rainbow(3, start= 0.7, end = 1),
        bty = "n")
 
-# What made you apply for first testing job - column 12
-
+# What made you apply for first testing job 
 reasons <- mydata[,12]
 
 str(reasons)
@@ -1219,23 +760,19 @@ reasonames[21] <- "Applied so could relocate"
 
 names(sorted_reasons) <- reasonames
 
-
-
-#set pars
+# Set pars
 # Change axis orientation
 par(las = 2)
+
 # Margins, bottom, left, top, right (default is  c(5.1, 4.1, 4.1, 2.1))
 par(mar=c(19,4.1,1,2.1))
 
-#Plot
-
+# Plot results
 barplot(sorted_reasons,
         ylim = c(0,100),
         xlim = c(0,25),
         ylab="Responses",
         col = heat.colors(21)
 )
-
-
 
 
