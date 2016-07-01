@@ -611,8 +611,8 @@ barplot(training,
         col = rainbow(7, start = 0.1, end = 0.6),
         ylim = c(0,250),
         xlim = c(0,8),
-        ylab="Popularity rating",
-        main="Training Course Popularity")
+        ylab="Course rating",
+        main="Training Courses by Rating")
 
 # Make an index which excludes people that answered None to highest qualification 
 # Because these people were not asked if they knew they wanted to be a tester while studying 
