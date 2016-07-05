@@ -220,7 +220,7 @@ matrix_jobs <- matrix(diff_job_before_tester, ncol=5, byrow= FALSE)
 
 # Label the columns and rows of this matrix
 rownames(matrix_jobs) <- c("No", "Yes")
-colnames(matrix_jobs) <- c("> 2", "2 - 5", "5 - 10", "10 - 20", "20+")
+colnames(matrix_jobs) <- c("< 2", "2 - 5", "5 - 10", "10 - 20", "20+")
 
 # Use prop.table to convert numeric values to percentage values
 matrix_jobs_perc <- prop.table(matrix_jobs, margin = 2)
@@ -310,7 +310,7 @@ matrix_comp <- matrix(study_comp, ncol=5, byrow= FALSE)
 
 # Label the columns and rows of this matrix
 rownames(matrix_comp) <- levels(tentotwenty_comp)
-colnames(matrix_comp) <- c("> 2", "2 - 5", "5 - 10", "10 - 20", "20+")
+colnames(matrix_comp) <- c("< 2", "2 - 5", "5 - 10", "10 - 20", "20+")
 
 # Use prop.table to convert numeric values to percentage values
 matrix_comp_perc <- prop.table(matrix_comp, margin = 2)
@@ -379,7 +379,7 @@ matrix_edu_exp <- matrix(edu_exp, ncol = 2, byrow = TRUE)
 
 # Name rows and columns
 colnames(matrix_edu_exp) <- c("Non-grad", "Grad")
-rownames(matrix_edu_exp) <- c("> 2", "2 - 5", "5 - 10", "10 - 20", "20+")
+rownames(matrix_edu_exp) <- c("< 2", "2 - 5", "5 - 10", "10 - 20", "20+")
 
 matrix_edu_exp 
 
@@ -698,7 +698,10 @@ matrix_t <- matrix(test, ncol=5, byrow= FALSE)
 
 #Label the columns and rows of this matrix
 rownames(matrix_t) <- levels(lessthanone_t)
-colnames(matrix_t) <- c("> 2", "2 - 5", "5 - 10", "10 - 20", "20+")
+colnames(matrix_t) <- c("< 2", "2 - 5", "5 - 10", "10 - 20", "20+")
+
+# Change axis orientation
+par(las = 1)
 
 #plot
 barplot(matrix_t,
@@ -774,5 +777,3 @@ barplot(sorted_reasons,
         ylab="Responses",
         col = heat.colors(21)
 )
-
-
