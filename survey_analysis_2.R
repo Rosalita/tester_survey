@@ -705,7 +705,7 @@ par(las = 1)
 
 #plot
 barplot(matrix_t,
-        col = rainbow(3, start= 0.7, end = 1),
+        col = rainbow(3, start= 0.4, end = 1),
         ylim = c(0,100),
         xlim = c(0,8),
         xlab="Years Testing",
@@ -715,7 +715,7 @@ barplot(matrix_t,
 legend(6.5,100,
        legend = rownames(matrix_t), 
        title = "Response",
-       fill = rainbow(3, start= 0.7, end = 1),
+       fill = rainbow(3, start= 0.4, end = 1),
        bty = "n")
 
 # What made you apply for first testing job 
