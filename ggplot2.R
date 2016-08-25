@@ -76,10 +76,11 @@ str(reasonsdf)
 factor(reasonsdf)
 
 # "#f8efea,"#f1e8d6","#eaeac3"
+#http://www.colorhexa.com/color-gradient
 
-colours <- c( "#eaeac3", "#d2e3b0","#d2e3b0", "#b3dc9f","#b3dc9f",  
+colours <- c( "#f8efea","#f1e8d6","#eaeac3", "#d2e3b0","#b3dc9f",  
              "#8ed48e", "#8ed48e","#7ecd98","#7ecd98", "#6ec6a9","#6ec6a9", "#60bfbf", "#60bfbf",
-             "#5296b8","#5296b8", "#4569b1",  "#4569b1","#4569b1","#4569b1", "#3939aa", "#3939aa")
+             "#5296b8","#5296b8", "#4569b1",  "#4569b1","#4948af","#4948af", "#3939aa", "#3939aa")
 
 colours2 <- rev(colours)
 
@@ -88,4 +89,6 @@ ggplot(reasonsdf, aes(x=Reason, y=Frequency))+
   geom_bar(colour="#3939aa", fill= colours2, stat="identity")+
   scale_fill_manual(values=c("#999999", "#E69F00"))+
   coord_flip()+
-  labs(x="Reason for application", y="Frequency")+
+  labs(x="Reason for application", y="Frequency")
+
+

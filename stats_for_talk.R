@@ -34,5 +34,8 @@ WorkplaceHappinessIndex <- pos_score+neg_score
 
 #bind the workplace happiness index into a final column
 mydata <- cbind(mydata, WorkplaceHappinessIndex)
+levels(mydata[,11])
 
-sad_tester
+saddest_tester <- which(mydata[,11] == "None of the above")
+
+saddest_tester <- mydata[saddest_tester,]
