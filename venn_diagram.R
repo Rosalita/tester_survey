@@ -77,3 +77,4 @@ vennDiagram(training,
             names = c("RST", "ISTQB Foundation", "ISTQB Advanced", "ISTQB Expert"),
             circle.col = c("skyblue", "lightgoldenrod1", "mediumorchid", "palegreen")
 )
+
