@@ -2,9 +2,18 @@
 # 2016 Rosie Hamilton 
 # testingfuntime.blogspot.co.uk
 
+#install ggplot2 & dependencies
+#install.packages("ggplot2")
+#install.packages("plyr")
+#install.packages("scales")
+#install.packages("tibble")
+
+#import ggplot2
+library(ggplot2)
+
 # Set working dir
-# setwd ("/Dev/Git/tester_survey")
-setwd("~/git/tester_survey")
+ setwd ("/Dev/Git/tester_survey")
+#setwd("~/git/tester_survey")
 
 # Read in data
 mydata <- read.csv("survey_results_raw.csv", 
@@ -183,6 +192,36 @@ boxplot(leave_testing,
         main = "Workplace Happiness vs likelihood to leave"
         )
 axis(2, at = seq(-12, 12, by = 2))
+
+# ggplot 2
+# transform the leave_testing matrix into a dataframe so can plot it with ggplot2
+dfleave <- stack(as.data.frame(leave_testing))
+
+
+# change the order of thefactor levels by specifying order explicity
+
+
+dfleave$ind
+
+#Levels keep being sorted alphabetically which is no good for plots
+levels(dfleave$ind)  # shows the levels are "likely", "Not sure", "Unlikely", "Very likely", "Very unlikely"
+
+# To reorder the levels use factor() and specify a new order
+dfleave$ind <- factor(dfleave$ind,levels(dfleave$ind)[c(4,1,2,3,5)])
+
+
+
+#plot in ggplot2
+p <- ggplot(dfleave, aes(factor(ind),values))
+p + geom_boxplot(outlier.shape = NA, aes(fill = ind)) + 
+  coord_flip() + 
+  ggtitle("Happiness of testers grouped by likelihood to look for a new job") +
+  labs(x = "Likelihood to look for a new testing job", y = "Happiness Index") +
+  guides(fill=FALSE) +
+  scale_y_continuous(breaks = c(-8,-7,-6,-5,-4,-3,-2,-1,0,1,2,3,4,5,6,7,8,9,10,11,12))+
+  scale_fill_manual(values=c("#EA220A", "#EC620F", "#F2DE1A","#99F726","#35FC31")) +
+  geom_jitter(colour ="black", alpha =0.5, width = 0.3, height = 0.3)
+
 
 
 # Make some plots of how long people have worked in testing
